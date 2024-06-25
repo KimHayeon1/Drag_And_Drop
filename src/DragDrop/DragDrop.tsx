@@ -32,6 +32,17 @@ export default function DragDrop() {
         return;
       }
 
+      const scourceIndex = source.index;
+      const destinationIndex = destination.index;
+
+      if (
+        items[destinationKey].length !== 0 &&
+        scourceIndex % 2 === 0 &&
+        destinationIndex % 2 === 0
+      ) {
+        return;
+      }
+
       const newItems = { ...items };
       const [targetItem] = newItems[scourceKey].splice(source.index, 1);
       newItems[destinationKey].splice(destination.index, 0, targetItem);
