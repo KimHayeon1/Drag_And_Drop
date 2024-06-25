@@ -28,6 +28,10 @@ export default function DragDrop() {
       const scourceKey = source.droppableId as Columns;
       const destinationKey = destination.droppableId as Columns;
 
+      if (scourceKey === "column1" && destinationKey === "column3") {
+        return;
+      }
+
       const newItems = { ...items };
       const [targetItem] = newItems[scourceKey].splice(source.index, 1);
       newItems[destinationKey].splice(destination.index, 0, targetItem);
