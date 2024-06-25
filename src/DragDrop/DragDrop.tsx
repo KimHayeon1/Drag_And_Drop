@@ -9,6 +9,7 @@ import {
 import { Columns, ItemType, Items } from "@/DragDrop/model";
 import { StyledColumn, StyledWrap } from "@/DragDrop/StyledDragDrop";
 import Item from "@/DragDrop/Item";
+import { isEven } from "@/utils";
 
 export default function DragDrop() {
   const getItems = (count: number, column: Columns): ItemType[] =>
@@ -52,14 +53,14 @@ export default function DragDrop() {
     // 드래그 제약 조건(짝수 아이템) - 다른 칼럼으로 이동 시에도 적용
     // const isEvenItemToEvenItemFront =
     //   items[destinationColumn].length !== 0 &&
-    //   sourceIndex % 2 === 0 &&
-    //   destinationIndex % 2 === 0;
+    //   isEven(sourceIndex) &&
+    //   isEven(destinationIndex);
 
     // 드래그 제약 조건(짝수 아이템) - 칼럼 내 이동 시 적용
     const isEvenItemToEvenItemFront =
       sourceColumn === destinationColumn &&
-      sourceIndex % 2 === 0 &&
-      destinationIndex % 2 === 0;
+      isEven(sourceIndex) &&
+      isEven(destinationIndex);
 
     if (isFirstColumnToThirdColumn || isEvenItemToEvenItemFront) {
       return false;
