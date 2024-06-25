@@ -1,17 +1,32 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import ReactDOM from "react-dom";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+  DragDropContextProps,
+  NotDraggingStyle,
+  DraggingStyle,
+} from "react-beautiful-dnd";
+
+interface Item {
+  id: string;
+  content: string;
+}
+
+type Items = Item[];
 
 function App() {
-  const getItems = (count) =>
+  const getItems = (count: number) =>
     Array.from({ length: count }, (v, k) => k).map((k) => ({
       id: `item-${k}`,
       content: `item ${k}`,
     }));
 
-  const [items, setItems] = useState(getItems(10));
+  const [items, setItems] = useState<Items>(getItems(10));
 
-  const reorder = (list, startIndex, endIndex) => {
+  const reorder = (list: Items, startIndex: number, endIndex: number) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -19,7 +34,7 @@ function App() {
   };
 
   const onDragEnd = useCallback(
-    (result) => {
+    (result: DropResult) => {
       if (!result.destination) {
         return;
       }
@@ -27,12 +42,12 @@ function App() {
       const newItems = reorder(
         items,
         result.source.index,
-        result.destination.index
+        result.destination.index,
       );
 
       setItems(newItems);
     },
-    [items]
+    [items],
   );
 
   return (
@@ -53,7 +68,7 @@ function App() {
                     {...provided.dragHandleProps}
                     style={getItemStyle(
                       snapshot.isDragging,
-                      provided.draggableProps.style
+                      provided.draggableProps.style,
                     )}
                   >
                     {item.content}
@@ -71,7 +86,10 @@ function App() {
 
 const GRID = 8;
 
-const getItemStyle = (isDragging, draggableStyle) => ({
+const getItemStyle = (
+  isDragging: boolean,
+  draggableStyle: DraggingStyle | NotDraggingStyle | undefined,
+): React.CSSProperties => ({
   userSelect: "none",
   padding: GRID * 2,
   margin: `0 0 ${GRID}px 0`,
@@ -79,7 +97,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   ...draggableStyle,
 });
 
-const getListStyle = (isDraggingOver) => ({
+const getListStyle = (isDraggingOver: boolean) => ({
   background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: GRID,
   width: 250,
