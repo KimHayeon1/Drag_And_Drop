@@ -4,6 +4,7 @@ type ItemType = {
   id: string;
   content: string;
   column: Columns;
+  isDropAble: boolean;
 };
 
 type Items = { [key in Columns]: ItemType[] };

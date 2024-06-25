@@ -17,10 +17,11 @@ const StyledColumn = styled.ul<{ $isDraggingOver: boolean }>`
     $isDraggingOver ? "lightblue" : "lightgrey"};
 `;
 
-const StyledItem = styled.li<{ $isDragging: boolean }>`
+const StyledItem = styled.li<{ $isDragging: boolean; $isDropAble: boolean }>`
   margin: 0 0 calc(var(--grid) * 1px) 0;
   padding: var(--grid) * 2;
-  background: ${({ $isDragging }) => ($isDragging ? "lightgreen" : "grey")};
+  background: ${({ $isDragging, $isDropAble }) =>
+    !$isDropAble ? "red" : $isDragging ? "lightgreen" : "grey"};
   user-select: "none";
 `;
 

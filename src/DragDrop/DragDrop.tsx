@@ -1,5 +1,11 @@
 import { useState, useCallback } from "react";
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  DraggableLocation,
+  DragUpdate,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
 import { Columns, ItemType, Items } from "@/DragDrop/model";
 import { StyledColumn, StyledWrap } from "@/DragDrop/StyledDragDrop";
 import Item from "@/DragDrop/Item";
@@ -10,6 +16,7 @@ export default function DragDrop() {
       id: `item-${index}`,
       content: `item ${index}`,
       column,
+      isDropAble: true,
     }));
 
   const [items, setItems] = useState<Items>({
@@ -19,34 +26,73 @@ export default function DragDrop() {
     column4: [],
   });
 
+  const setIsDropAble = (source: DraggableLocation, isDropAble: boolean) => {
+    const sourceColumn = source.droppableId as Columns;
+    const sourceIndex = source.index;
+    const newItems = { ...items };
+    newItems[sourceColumn][sourceIndex] = {
+      ...newItems[sourceColumn][sourceIndex],
+      isDropAble: isDropAble,
+    };
+    setItems(newItems);
+  };
+
+  const checkDropConstraints = (
+    source: DraggableLocation,
+    destination: DraggableLocation,
+  ) => {
+    const sourceColumn = source.droppableId as Columns;
+    const destinationColumn = destination.droppableId as Columns;
+    const sourceIndex = source.index;
+    const destinationIndex = destination.index;
+
+    const isFirstColumnToThirdColumn =
+      sourceColumn === "column1" && destinationColumn === "column3";
+    const isEvenItemToEvenItemFront =
+      items[destinationColumn].length !== 0 &&
+      sourceIndex % 2 === 0 &&
+      destinationIndex % 2 === 0;
+
+    if (isFirstColumnToThirdColumn || isEvenItemToEvenItemFront) {
+      return false;
+    }
+
+    return true;
+  };
+
   const onDragEnd = useCallback(
     ({ source, destination }: DropResult) => {
       if (!destination) {
         return;
       }
 
-      const scourceKey = source.droppableId as Columns;
-      const destinationKey = destination.droppableId as Columns;
-
-      if (scourceKey === "column1" && destinationKey === "column3") {
+      if (!checkDropConstraints(source, destination)) {
+        setIsDropAble(source, true);
         return;
       }
 
-      const scourceIndex = source.index;
-      const destinationIndex = destination.index;
-
-      if (
-        items[destinationKey].length !== 0 &&
-        scourceIndex % 2 === 0 &&
-        destinationIndex % 2 === 0
-      ) {
-        return;
-      }
+      const sourceColumn = source.droppableId as Columns;
+      const destinationColumn = destination.droppableId as Columns;
 
       const newItems = { ...items };
-      const [targetItem] = newItems[scourceKey].splice(source.index, 1);
-      newItems[destinationKey].splice(destination.index, 0, targetItem);
+      const [targetItem] = newItems[sourceColumn].splice(source.index, 1);
+      newItems[destinationColumn].splice(destination.index, 0, targetItem);
       setItems(newItems);
+    },
+    [items],
+  );
+
+  const onDragUpdate = useCallback(
+    ({ source, destination }: DragUpdate) => {
+      if (!destination) {
+        return;
+      }
+
+      if (checkDropConstraints(source, destination)) {
+        setIsDropAble(source, true);
+      } else {
+        setIsDropAble(source, false);
+      }
     },
     [items],
   );
@@ -54,7 +100,7 @@ export default function DragDrop() {
   const columns: Columns[] = ["column1", "column2", "column3", "column4"];
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
       <StyledWrap>
         {columns.map((column) => (
           <Droppable key={column} droppableId={column}>

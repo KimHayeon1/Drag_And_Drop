@@ -17,6 +17,7 @@ export default function Item({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           $isDragging={snapshot.isDragging}
+          $isDropAble={item.isDropAble}
         >
           {item.content}
         </StyledItem>
