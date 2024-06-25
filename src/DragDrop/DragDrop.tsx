@@ -48,8 +48,16 @@ export default function DragDrop() {
 
     const isFirstColumnToThirdColumn =
       sourceColumn === "column1" && destinationColumn === "column3";
+
+    // 드래그 제약 조건(짝수 아이템) - 다른 칼럼으로 이동 시에도 적용
+    // const isEvenItemToEvenItemFront =
+    //   items[destinationColumn].length !== 0 &&
+    //   sourceIndex % 2 === 0 &&
+    //   destinationIndex % 2 === 0;
+
+    // 드래그 제약 조건(짝수 아이템) - 칼럼 내 이동 시 적용
     const isEvenItemToEvenItemFront =
-      items[destinationColumn].length !== 0 &&
+      sourceColumn === destinationColumn &&
       sourceIndex % 2 === 0 &&
       destinationIndex % 2 === 0;
 
