@@ -1,74 +1,64 @@
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "react-beautiful-dnd";
 import { useState, useCallback } from "react";
-import { Items } from "@/model";
-import { StyledItem, StyledColumn } from "@/DragDrop/StyledColumn";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { Columns, ItemType, Items } from "@/DragDrop/model";
+import { StyledColumn, StyledWrap } from "@/DragDrop/StyledDragDrop";
+import Item from "@/DragDrop/Item";
 
 export default function DragDrop() {
-  const getItems = (count: number) =>
+  const getItems = (count: number, column: Columns): ItemType[] =>
     Array.from({ length: count }, (_, index) => ({
       id: `item-${index}`,
       content: `item ${index}`,
+      column,
     }));
 
-  const [items, setItems] = useState<Items>(getItems(10));
-
-  const reorder = (list: Items, startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
-  };
+  const [items, setItems] = useState<Items>({
+    column1: getItems(10, "column1"),
+    column2: [],
+    column3: [],
+    column4: [],
+  });
 
   const onDragEnd = useCallback(
-    (result: DropResult) => {
-      if (!result.destination) {
+    ({ source, destination }: DropResult) => {
+      if (!destination) {
         return;
       }
 
-      const newItems = reorder(
-        items,
-        result.source.index,
-        result.destination.index,
-      );
+      const scourceKey = source.droppableId as Columns;
+      const destinationKey = destination.droppableId as Columns;
 
+      const newItems = { ...items };
+      const [targetItem] = newItems[scourceKey].splice(source.index, 1);
+      newItems[destinationKey].splice(destination.index, 0, targetItem);
       setItems(newItems);
     },
     [items],
   );
 
+  const columns: Columns[] = ["column1", "column2", "column3", "column4"];
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable">
-        {(provided, snapshot) => (
-          <StyledColumn
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            $isDraggingOver={snapshot.isDraggingOver}
-          >
-            {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
-                {(provided, snapshot) => (
-                  <StyledItem
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    style={provided.draggableProps.style}
-                    $isDragging={snapshot.isDragging}
-                  >
-                    {item.content}
-                  </StyledItem>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </StyledColumn>
-        )}
-      </Droppable>
+      <StyledWrap>
+        {columns.map((column) => (
+          <Droppable key={column} droppableId={column}>
+            {(provided, snapshot) => (
+              <StyledColumn
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                $isDraggingOver={snapshot.isDraggingOver}
+              >
+                <h2>{column}</h2>
+                {items[column].map((item, index) => (
+                  <Item item={item} index={index} />
+                ))}
+                {provided.placeholder}
+              </StyledColumn>
+            )}
+          </Droppable>
+        ))}
+      </StyledWrap>
     </DragDropContext>
   );
 }

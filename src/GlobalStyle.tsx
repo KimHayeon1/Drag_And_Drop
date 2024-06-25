@@ -5,6 +5,10 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  body {
+    margin: 0;
+  }
+
   button {
     padding: 0;
     border: none;
@@ -16,6 +20,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   ul {
+    margin: 0;
     list-style: none;
   }
 `;
