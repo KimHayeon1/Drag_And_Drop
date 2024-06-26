@@ -19,10 +19,17 @@ export default function DragDrop() {
     toggleSelectionInGroup,
     multiSelectTo,
     toggleSelection,
+    addItemInSelectionGroup,
   } = useMultiSelect(items);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
+    <DragDropContext
+      onDragEnd={(e) => {
+        onDragEnd(e);
+        addItemInSelectionGroup(e);
+      }}
+      onDragUpdate={onDragUpdate}
+    >
       <StyledWrap>
         {columns.map((column) => (
           <Droppable key={column} droppableId={column}>

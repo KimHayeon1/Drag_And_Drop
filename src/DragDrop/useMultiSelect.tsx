@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DropResult } from "react-beautiful-dnd";
 
 import { initialSelectedItems } from "@/DragDrop/data";
 
@@ -162,10 +163,28 @@ export default function useMultiSelect(items: Items) {
     }
   };
 
+  const addItemInSelectionGroup = ({ destination }: DropResult) => {
+    if (!destination) {
+      return;
+    }
+
+    const destinationColumn = destination.droppableId as Columns;
+    const id = items[destinationColumn][destination.index].id;
+
+    setSelectedItems((prev) => ({
+      multiSelection: {
+        column: destinationColumn,
+        start: destination.index,
+      },
+      selectedItemsId: new Set([...prev.selectedItemsId, id]),
+    }));
+  };
+
   return {
     selectedItems,
     toggleSelectionInGroup,
     multiSelectTo,
     toggleSelection,
+    addItemInSelectionGroup,
   };
 }
