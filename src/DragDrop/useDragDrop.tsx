@@ -20,7 +20,20 @@ export default function useDragDrop(
     setItems(newItems);
   };
 
-  const checkDropConstraints = (
+  const checkColumnConstraints = (
+    source: DraggableLocation,
+    destination: DraggableLocation,
+  ) => {
+    const sourceColumn = source.droppableId as Columns;
+    const destinationColumn = destination.droppableId as Columns;
+
+    const isFirstColumnToThirdColumn =
+      sourceColumn === "column1" && destinationColumn === "column3";
+
+    return !isFirstColumnToThirdColumn;
+  };
+
+  const checkEvenItemConstraints = (
     source: DraggableLocation,
     destination: DraggableLocation,
   ) => {
@@ -29,26 +42,51 @@ export default function useDragDrop(
     const sourceIndex = source.index;
     const destinationIndex = destination.index;
 
-    const isFirstColumnToThirdColumn =
-      sourceColumn === "column1" && destinationColumn === "column3";
+    // 다른 칼럼으로 이동 시에도 제약 적용
+    // if (items[destinationColumn].length === 0) {
+    //   return true;
+    // }
 
-    // 드래그 제약 조건(짝수 아이템) - 다른 칼럼으로 이동 시에도 적용
-    // const isEvenItemToEvenItemFront =
-    //   items[destinationColumn].length !== 0 &&
-    //   isEven(sourceIndex) &&
-    //   isEven(destinationIndex);
+    // if (
+    //   sourceColumn === destinationColumn &&
+    //   sourceIndex === destinationIndex
+    // ) {
+    //   return true;
+    // }
 
-    // 드래그 제약 조건(짝수 아이템) - 칼럼 내 이동 시 적용
-    const isEvenItemToEvenItemFront =
-      sourceColumn === destinationColumn &&
-      isEven(sourceIndex) &&
-      isEven(destinationIndex);
+    // if (isEven(sourceIndex) && isEven(destinationIndex)) {
+    //   return false;
+    // }
 
-    if (isFirstColumnToThirdColumn || isEvenItemToEvenItemFront) {
+    // return true;
+
+    // 칼럼 내 이동 시 제약 적용
+    if (sourceColumn !== destinationColumn) {
+      return true;
+    }
+
+    if (sourceIndex === destinationIndex) {
+      return true;
+    }
+
+    if (isEven(sourceIndex) && isEven(destinationIndex)) {
       return false;
     }
 
     return true;
+  };
+
+  const checkDropConstraints = (
+    source: DraggableLocation,
+    destination: DraggableLocation,
+  ) => {
+    const passColumnConstraints = checkColumnConstraints(source, destination);
+    const passEvenItemConstraints = checkEvenItemConstraints(
+      source,
+      destination,
+    );
+
+    return passColumnConstraints && passEvenItemConstraints;
   };
 
   const onDragEnd = useCallback(
