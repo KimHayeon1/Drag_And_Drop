@@ -9,4 +9,14 @@ type ItemType = {
 
 type Items = { [key in Columns]: ItemType[] };
 
-export type { ItemType, Items, Columns };
+type Index = number;
+
+type SelectedItems = {
+  multiSelection: {
+    column: Columns;
+    startItem: Index;
+  };
+  selectedItemsId: Set<string>;
+} | null;
+
+export type { ItemType, Items, Columns, SelectedItems };
