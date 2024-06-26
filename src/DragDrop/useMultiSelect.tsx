@@ -173,7 +173,7 @@ export default function useMultiSelect(items: Items) {
         start: source.index,
       },
       selectedItemsId: new Set(
-        selectedItemsId.size === 1 ? [id] : [...selectedItemsId, id],
+        selectedItemsId.size <= 1 ? [id] : [...selectedItemsId, id],
       ),
     }));
   };
