@@ -1,42 +1,88 @@
 import { useState } from "react";
 
-import type { Columns, Items, SelectedItems } from "@/DragDrop/model";
+import { initialSelectedItems } from "@/DragDrop/data";
+
+import type { Columns, ItemType, Items, SelectedItems } from "@/DragDrop/model";
+
+const getMultiSelectionItems = (
+  start: number,
+  end: number,
+  columnItems: ItemType[],
+) => {
+  return columnItems
+    .filter((_, i) => start <= i && i <= end)
+    .map(({ id }) => id);
+};
 
 export default function useMultiSelect(items: Items) {
-  const [selectedItems, setSelectedItems] = useState<SelectedItems>(null);
+  const [selectedItems, setSelectedItems] =
+    useState<SelectedItems>(initialSelectedItems);
+
+  const setSelectedItemsToCurrentItem = (
+    itemId: string,
+    itemIndex: number,
+    column: Columns,
+  ) => {
+    setSelectedItems({
+      multiSelection: {
+        column,
+        start: itemIndex,
+      },
+      selectedItemsId: new Set([itemId]),
+    });
+  };
+
+  const getNonConsecutiveItems = (
+    start: number,
+    end: number,
+    columnItems: ItemType[],
+  ) => {
+    const nonConsecutiveItems = new Set(selectedItems.selectedItemsId);
+
+    for (let i = start; i >= 0; i--) {
+      const { id } = columnItems[i];
+
+      if (nonConsecutiveItems.has(id)) {
+        nonConsecutiveItems.delete(id);
+      } else {
+        break;
+      }
+    }
+
+    for (let i = end; i < columnItems.length; i++) {
+      const { id } = columnItems[i];
+
+      if (nonConsecutiveItems.has(id)) {
+        nonConsecutiveItems.delete(id);
+      } else {
+        break;
+      }
+    }
+
+    return nonConsecutiveItems;
+  };
 
   const toggleSelectionInGroup = (
     itemId: string,
     itemIndex: number,
     column: Columns,
   ) => {
-    if (!selectedItems) {
-      setSelectedItems({
-        multiSelection: {
-          column,
-          startItem: itemIndex,
-        },
-        selectedItemsId: new Set([itemId]),
-      });
-      return;
-    }
+    const newSelectedItemsId = new Set(selectedItems.selectedItemsId);
+    const isPrevSelected = selectedItems.selectedItemsId.has(itemId);
 
-    const newselectedItemsId = new Set(selectedItems.selectedItemsId);
-
-    if (selectedItems.selectedItemsId.has(itemId)) {
-      newselectedItemsId.delete(itemId);
+    if (isPrevSelected) {
+      newSelectedItemsId.delete(itemId);
     } else {
-      newselectedItemsId.add(itemId);
+      newSelectedItemsId.add(itemId);
     }
 
-    const newSelectedItems = {
+    setSelectedItems({
       multiSelection: {
         column,
-        startItem: itemIndex,
+        start: itemIndex,
       },
-      selectedItemsId: newselectedItemsId,
-    };
-    setSelectedItems(newSelectedItems);
+      selectedItemsId: newSelectedItemsId,
+    });
   };
 
   const multiSelectTo = (
@@ -44,84 +90,55 @@ export default function useMultiSelect(items: Items) {
     itemIndex: number,
     column: Columns,
   ) => {
-    if (!selectedItems) {
-      setSelectedItems({
-        multiSelection: {
-          column,
-          startItem: itemIndex,
-        },
-        selectedItemsId: new Set([itemId]),
-      });
-      return;
-    }
-
     if (column !== selectedItems.multiSelection.column) {
       return;
     }
 
-    const startItemForMultiSelection = selectedItems.multiSelection.startItem;
-    const selectedItemsId = selectedItems.selectedItemsId;
-    let newselectedItemsId;
-    const nonConsecutiveSelectedItems = new Set(selectedItemsId);
+    const hasSelectedItems = selectedItems.selectedItemsId.size > 1;
 
-    if (startItemForMultiSelection < itemIndex) {
-      for (let i = itemIndex; i < items[column].length; i++) {
-        if (nonConsecutiveSelectedItems.has(items[column][i].id)) {
-          nonConsecutiveSelectedItems.delete(items[column][i].id);
-        } else {
-          break;
-        }
-      }
-
-      for (let i = startItemForMultiSelection; i >= 0; i--) {
-        if (nonConsecutiveSelectedItems.has(items[column][i].id)) {
-          nonConsecutiveSelectedItems.delete(items[column][i].id);
-        } else {
-          break;
-        }
-      }
-
-      newselectedItemsId = items[column]
-        .filter(
-          (_, index) =>
-            index >= startItemForMultiSelection && index <= itemIndex,
-        )
-        .map(({ id }) => id);
-    } else {
-      for (let i = startItemForMultiSelection; i < items[column].length; i++) {
-        if (nonConsecutiveSelectedItems.has(items[column][i].id)) {
-          nonConsecutiveSelectedItems.delete(items[column][i].id);
-        } else {
-          break;
-        }
-      }
-
-      for (let i = itemIndex; i >= 0; i--) {
-        if (nonConsecutiveSelectedItems.has(items[column][i].id)) {
-          nonConsecutiveSelectedItems.delete(items[column][i].id);
-        } else {
-          break;
-        }
-      }
-
-      newselectedItemsId = items[column]
-        .filter(
-          (_, index) =>
-            index <= startItemForMultiSelection && index >= itemIndex,
-        )
-        .map(({ id }) => id);
+    if (hasSelectedItems) {
+      setSelectedItemsToCurrentItem(itemId, itemIndex, column);
+      return;
     }
 
-    setSelectedItems({
-      multiSelection: {
-        column,
-        startItem: startItemForMultiSelection,
-      },
+    let multiSelectionItems;
+    let nonConsecutiveItems;
+    const {
+      multiSelection: { start },
+    } = selectedItems;
+
+    if (start < itemIndex) {
+      nonConsecutiveItems = getNonConsecutiveItems(
+        start,
+        itemIndex,
+        items[column],
+      );
+      multiSelectionItems = getMultiSelectionItems(
+        start,
+        itemIndex,
+        items[column],
+      );
+    } else {
+      nonConsecutiveItems = getNonConsecutiveItems(
+        itemIndex,
+        start,
+        items[column],
+      );
+
+      multiSelectionItems = getMultiSelectionItems(
+        itemIndex,
+        start,
+        items[column],
+      );
+    }
+
+    setSelectedItems((prev) => ({
+      ...prev,
       selectedItemsId: new Set([
-        ...nonConsecutiveSelectedItems,
-        ...newselectedItemsId,
+        ...nonConsecutiveItems,
+        ...multiSelectionItems,
       ]),
-    });
+    }));
   };
 
   const toggleSelection = (
@@ -129,19 +146,19 @@ export default function useMultiSelect(items: Items) {
     itemIndex: number,
     column: Columns,
   ) => {
-    if (
-      selectedItems?.selectedItemsId.size === 1 &&
-      selectedItems?.selectedItemsId.has(itemId)
-    ) {
-      setSelectedItems(null);
+    const hasSelectedItems = selectedItems.selectedItemsId.size > 1;
+
+    if (hasSelectedItems) {
+      setSelectedItemsToCurrentItem(itemId, itemIndex, column);
+      return;
+    }
+
+    const isPrevSelected = selectedItems.selectedItemsId.has(itemId);
+
+    if (isPrevSelected) {
+      setSelectedItems(initialSelectedItems);
     } else {
-      setSelectedItems({
-        multiSelection: {
-          column,
-          startItem: itemIndex,
-        },
-        selectedItemsId: new Set([itemId]),
-      });
+      setSelectedItemsToCurrentItem(itemId, itemIndex, column);
     }
   };
 

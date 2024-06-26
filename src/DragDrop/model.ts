@@ -13,10 +13,10 @@ type Index = number;
 
 type SelectedItems = {
   multiSelection: {
-    column: Columns;
-    startItem: Index;
+    column: Columns | null;
+    start: Index; // initial = -1
   };
   selectedItemsId: Set<string>;
-} | null;
+};
 
 export type { ItemType, Items, Columns, SelectedItems };

@@ -1,4 +1,4 @@
-import type { Columns, ItemType, Items } from "@/DragDrop/model";
+import type { Columns, ItemType, Items, SelectedItems } from "@/DragDrop/model";
 
 const columns: Columns[] = ["column1", "column2", "column3", "column4"];
 
@@ -17,4 +17,12 @@ const items: Items = {
   column4: [],
 };
 
-export { columns, items };
+const initialSelectedItems: SelectedItems = {
+  multiSelection: {
+    column: null,
+    start: -1,
+  },
+  selectedItemsId: new Set(),
+};
+
+export { columns, items, initialSelectedItems };
