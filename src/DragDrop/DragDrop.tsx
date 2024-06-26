@@ -24,11 +24,9 @@ export default function DragDrop() {
 
   return (
     <DragDropContext
-      onDragEnd={(e) => {
-        onDragEnd(e);
-        addItemInSelectionGroup(e);
-      }}
+      onDragEnd={onDragEnd}
       onDragUpdate={onDragUpdate}
+      onDragStart={addItemInSelectionGroup}
     >
       <StyledWrap>
         {columns.map((column) => (

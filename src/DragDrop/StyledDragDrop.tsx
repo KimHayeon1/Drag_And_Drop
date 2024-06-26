@@ -35,7 +35,6 @@ const StyledItem = styled.li<{
   padding: calc(var(--grid) * 2);
   text-align: left;
   background: #fff;
-  outline: ${({ $isDragging }) => ($isDragging ? "2px solid blue" : "")};
   outline: ${({ $isSelected }) => ($isSelected ? "2px solid blue" : "")};
   outline: ${({ $isDropAble }) => (!$isDropAble ? "2px solid red" : "")};
   user-select: "none";
