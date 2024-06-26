@@ -14,9 +14,9 @@ const StyledColumn = styled.ul<{ $isDraggingOver: boolean }>`
   padding: var(--grid);
   width: calc((100% - var(--grid) * 6) / 4);
   flex-grow: 1;
-  background: ${({ $isDraggingOver }) =>
-    $isDraggingOver ? "lightblue" : "black"};
-  color: white;
+  background: ${({ $isDraggingOver }) => ($isDraggingOver ? "#bbb" : "#ddd")};
+  color: #111;
+  text-align: center;
 
   @media (max-width: 768px) {
     width: calc((100% - var(--grid) * 2) / 2);
@@ -33,10 +33,11 @@ const StyledItem = styled.li<{
   $isSelected: boolean;
 }>`
   padding: calc(var(--grid) * 2);
-  background: ${({ $isDragging }) => ($isDragging ? "blue" : "white")};
-  background: ${({ $isDropAble }) => (!$isDropAble ? "red" : "")};
-  background: ${({ $isSelected }) => ($isSelected ? "blue" : "")};
-  color: black;
+  text-align: left;
+  background: #fff;
+  outline: ${({ $isDragging }) => ($isDragging ? "2px solid blue" : "")};
+  outline: ${({ $isSelected }) => ($isSelected ? "2px solid blue" : "")};
+  outline: ${({ $isDropAble }) => (!$isDropAble ? "2px solid red" : "")};
   user-select: "none";
 
   & + & {
@@ -44,7 +45,8 @@ const StyledItem = styled.li<{
   }
 
   &:hover {
-    background: ${({ $isSelected }) => ($isSelected ? "blue" : "skyblue")};
+    outline: ${({ $isSelected }) =>
+      $isSelected ? "2px solid blue" : "2px solid #9999ff"};
   }
 `;
 
