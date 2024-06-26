@@ -1,23 +1,30 @@
 import styled from "styled-components";
 
 const StyledWrap = styled.div`
-  padding: 24px;
+  --grid: 8px;
+
+  padding: calc(var(--grid) * 3);
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: calc(var(--grid) * 2);
   width: 100vw;
 `;
 
 const StyledColumn = styled.ul<{ $isDraggingOver: boolean }>`
-  --grid: 8;
-
   padding: var(--grid);
-  width: calc((100% - 16px * 3) / 4);
-  min-width: 250px;
+  width: calc((100% - var(--grid) * 6) / 4);
   flex-grow: 1;
   background: ${({ $isDraggingOver }) =>
     $isDraggingOver ? "lightblue" : "black"};
   color: white;
+
+  @media (max-width: 768px) {
+    width: calc((100% - var(--grid) * 2) / 2);
+  }
+
+  @media (max-width: 430px) {
+    width: 100%;
+  }
 `;
 
 const StyledItem = styled.li<{
@@ -25,15 +32,19 @@ const StyledItem = styled.li<{
   $isDropAble: boolean;
   $isSelected: boolean;
 }>`
-  padding: calc(var(--grid) * 2px);
-  background: ${({ $isDragging, $isDropAble }) =>
-    !$isDropAble ? "red" : $isDragging ? "lightgreen" : "white"};
+  padding: calc(var(--grid) * 2);
+  background: ${({ $isDragging }) => ($isDragging ? "blue" : "white")};
+  background: ${({ $isDropAble }) => (!$isDropAble ? "red" : "")};
   background: ${({ $isSelected }) => ($isSelected ? "blue" : "")};
   color: black;
   user-select: "none";
 
   & + & {
-    margin: calc(var(--grid) * 1px) 0 0;
+    margin: var(--grid) 0 0;
+  }
+
+  &:hover {
+    background: ${({ $isSelected }) => ($isSelected ? "blue" : "skyblue")};
   }
 `;
 
