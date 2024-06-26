@@ -47,19 +47,15 @@
       "error",
       {
         "newlines-between": "always",
-        "groups": ["builtin", "external", "parent", "type"],
+        "groups": ["builtin", "external", "internal", "type"],
         "pathGroups": [
           {
-            "pattern": "react",
-            "group": "builtin"
-          },
-          {
-            "pattern": "@/types/**",
+            "pattern": "**/model",
             "group": "type"
           },
           {
             "pattern": "@/**",
-            "group": "parent"
+            "group": "internal"
           }
         ],
         "pathGroupsExcludedImportTypes": [],
