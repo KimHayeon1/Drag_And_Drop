@@ -43,7 +43,8 @@ const StyledItem = styled.li<{
     margin: var(--grid) 0 0;
   }
 
-  &:hover {
+  &:hover,
+  &:focus {
     outline: ${({ $isSelected }) =>
       $isSelected ? "2px solid blue" : "2px solid #9999ff"};
   }
