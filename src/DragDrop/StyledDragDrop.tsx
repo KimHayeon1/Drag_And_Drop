@@ -53,6 +53,11 @@ const DefaultStyle = css`
   }
 `;
 
+const disabledDropStyle = css`
+  outline: 2px solid red;
+  background: #ffdddd;
+`;
+
 const StyledItem = styled.li<{
   $itemState: ItemState;
   $isDropAble: boolean;
@@ -60,12 +65,12 @@ const StyledItem = styled.li<{
   padding: calc(var(--grid) * 2);
   text-align: left;
   background: #fff;
-  outline: ${({ $isDropAble }) => (!$isDropAble ? "2px solid red" : "")};
   user-select: "none";
   ${({ $itemState }) => $itemState === "draggingGroup" && DraggingGroupStyle}
   ${({ $itemState }) => $itemState === "selectionGroup" && SelectionGroupStyle}
   ${({ $itemState }) => $itemState === "current" && CurrentStyle}
   ${({ $itemState }) => $itemState === "default" && DefaultStyle}
+  ${({ $isDropAble }) => !$isDropAble && disabledDropStyle}
 
   & + & {
     margin: var(--grid) 0 0;
