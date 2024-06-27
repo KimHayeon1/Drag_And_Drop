@@ -23,6 +23,7 @@ export default function DragDrop() {
     toggleSelectionInGroup,
     multiSelectTo,
     toggleSelection,
+    toggleSelectionByKeybord,
     multiSelectByKeybord,
     addItemInSelectionGroup,
   } = useMultiSelect(items);
@@ -80,6 +81,7 @@ export default function DragDrop() {
                             toggleSelectionInGroup,
                             multiSelectTo,
                             toggleSelection,
+                            toggleSelectionByKeybord,
                             multiSelectByKeybord,
                           }}
                           itemState={itemState}

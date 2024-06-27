@@ -14,11 +14,22 @@ type SelectedItems = {
 
 type ItemState = "current" | "selectionGroup" | "draggingGroup" | "default";
 
+type ToggleSelectionInGroup = (itemId: string) => void;
+type MultiSelectTo = (itemId: string, itemIndex: number) => void;
+type ToggleSelection = (itemId: string) => void;
+type ToggleSelectionByKeybord = (
+  prevItemId: string,
+  prevItemIndex: number,
+  key: "ArrowUp" | "ArrowDown" | "Tab" | "Shift+Tab",
+) => void;
+type MultiSelectByKeybord = (itemId: string, itemIndex: number) => void;
+
 type MultiSelectionFuncs = {
-  toggleSelectionInGroup: (itemId: string) => void;
-  multiSelectTo: (itemId: string, itemIndex: number) => void;
-  toggleSelection: (itemId: string) => void;
-  multiSelectByKeybord: (itemId: string, itemIndex: number) => void;
+  toggleSelectionInGroup: ToggleSelectionInGroup;
+  multiSelectTo: MultiSelectTo;
+  toggleSelection: ToggleSelection;
+  toggleSelectionByKeybord: ToggleSelectionByKeybord;
+  multiSelectByKeybord: MultiSelectByKeybord;
 };
 
 export type {
@@ -28,4 +39,9 @@ export type {
   SelectedItems,
   ItemState,
   MultiSelectionFuncs,
+  ToggleSelectionInGroup,
+  MultiSelectTo,
+  ToggleSelection,
+  ToggleSelectionByKeybord,
+  MultiSelectByKeybord,
 };

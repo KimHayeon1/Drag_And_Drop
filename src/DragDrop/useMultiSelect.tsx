@@ -3,7 +3,17 @@ import { DragStart } from "react-beautiful-dnd";
 
 import { columns, initialSelectedItems } from "@/DragDrop/data";
 
-import type { Columns, ItemType, Items, SelectedItems } from "@/DragDrop/model";
+import type {
+  Columns,
+  ItemType,
+  Items,
+  MultiSelectByKeybord,
+  MultiSelectTo,
+  SelectedItems,
+  ToggleSelection,
+  ToggleSelectionByKeybord,
+  ToggleSelectionInGroup,
+} from "@/DragDrop/model";
 
 const getMultiSelectionItems = (
   start: number,
@@ -96,7 +106,7 @@ export default function useMultiSelect(items: Items) {
     return nonConsecutiveItems;
   };
 
-  const toggleSelectionInGroup = (itemId: string) => {
+  const toggleSelectionInGroup: ToggleSelectionInGroup = (itemId: string) => {
     const newSelectedItemsId = new Set(selectedItems.selectedItemsId);
     const isPrevSelected = selectedItems.selectedItemsId.has(itemId);
 
@@ -112,7 +122,7 @@ export default function useMultiSelect(items: Items) {
     });
   };
 
-  const multiSelectTo = (itemId: string, itemIndex: number) => {
+  const multiSelectTo: MultiSelectTo = (itemId: string, itemIndex: number) => {
     if (!selectedItems.selectedItemsId.size) {
       setSelectedItemsToCurrentItem(itemId);
       return;
@@ -170,7 +180,7 @@ export default function useMultiSelect(items: Items) {
     }));
   };
 
-  const toggleSelection = (itemId: string) => {
+  const toggleSelection: ToggleSelection = (itemId: string) => {
     const hasSelectedItems = selectedItems.selectedItemsId.size > 1;
 
     if (hasSelectedItems) {
@@ -199,17 +209,111 @@ export default function useMultiSelect(items: Items) {
     }));
   };
 
-  const multiSelectByKeybord = (prevItemId: string, itemIndex: number) => {
-    if (!selectedItems.currItem) {
+  const toggleSelectionByTab = (column: Columns, prevItemIndex: number) => {
+    if (items[column].length !== prevItemIndex + 1) {
+      const { id } = items[column][prevItemIndex + 1];
+      setSelectedItemsToCurrentItem(id);
       return;
     }
 
+    const columnIndex = columns.findIndex((v) => v === column);
+    const nextColumn = columns[columnIndex + 1];
+
+    if (nextColumn && items[nextColumn].length) {
+      const { id } = items[nextColumn][0];
+      setSelectedItemsToCurrentItem(id);
+      return;
+    }
+
+    setSelectedItems(initialSelectedItems);
+  };
+
+  const toggleSelectionByShiftTab = (
+    column: Columns,
+    prevItemIndex: number,
+  ) => {
+    console.log(column, prevItemIndex);
+    if (prevItemIndex !== 0) {
+      const { id } = items[column][prevItemIndex - 1];
+      setSelectedItemsToCurrentItem(id);
+      return;
+    }
+
+    const columnIndex = columns.findIndex((v) => v === column);
+    const prevColumn = columns[columnIndex - 1];
+
+    if (prevColumn && items[prevColumn].length) {
+      const [{ id }] = items[prevColumn].slice(-1);
+      setSelectedItemsToCurrentItem(id);
+      return;
+    }
+
+    setSelectedItems(initialSelectedItems);
+  };
+
+  const toggleSelectionByArrowUp = (column: Columns, prevItemIndex: number) => {
+    let id;
+
+    if (prevItemIndex === 0) {
+      id = items[column].slice(-1)[0].id;
+    } else {
+      id = items[column][prevItemIndex - 1].id;
+    }
+    setSelectedItemsToCurrentItem(id);
+  };
+
+  const toggleSelectionByArrowDown = (
+    column: Columns,
+    prevItemIndex: number,
+  ) => {
+    let id;
+
+    if (items[column].length === prevItemIndex + 1) {
+      id = items[column][0].id;
+    } else {
+      id = items[column][prevItemIndex + 1].id;
+    }
+
+    setSelectedItemsToCurrentItem(id);
+  };
+
+  const toggleSelectionByKeybord: ToggleSelectionByKeybord = (
+    prevItemId: string,
+    prevItemIndex: number,
+    key: "ArrowUp" | "ArrowDown" | "Tab" | "Shift+Tab",
+  ) => {
     const column = findItemColumn(prevItemId);
 
     if (!column) {
       return;
     }
 
+    switch (key) {
+      case "ArrowUp":
+        toggleSelectionByArrowUp(column, prevItemIndex);
+        break;
+      case "ArrowDown":
+        toggleSelectionByArrowDown(column, prevItemIndex);
+        break;
+      case "Tab":
+        toggleSelectionByTab(column, prevItemIndex);
+        break;
+      case "Shift+Tab":
+        toggleSelectionByShiftTab(column, prevItemIndex);
+    }
+  };
+
+  const multiSelectByKeybord: MultiSelectByKeybord = (
+    prevItemId: string,
+    itemIndex: number,
+  ) => {
+    const column = findItemColumn(prevItemId);
+
+    if (!column) {
+      return;
+    }
+
+    // index 대신 keycod?
     const currIndex = findItemIndex(selectedItems.currItem, column);
     let newSelectedItemsId: Set<string>;
 
@@ -235,6 +339,7 @@ export default function useMultiSelect(items: Items) {
     multiSelectTo,
     toggleSelection,
     addItemInSelectionGroup,
+    toggleSelectionByKeybord,
     multiSelectByKeybord,
   };
 }

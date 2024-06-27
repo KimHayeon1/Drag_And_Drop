@@ -26,38 +26,46 @@ export default function Item({
   };
 }) {
   const onArrowUp = (event: KeyboardEvent<HTMLLIElement>) => {
+    event.preventDefault();
+
     const prevLi = event.currentTarget.previousElementSibling;
+    const isMultiSelection = wasMultiSelectKeyUsed(event);
 
     if (prevLi) {
       const prevItem = prevLi as HTMLLIElement;
       prevItem.focus();
-    } else {
+    } else if (!isMultiSelection) {
       const lastItem = event.currentTarget.parentElement
         ?.lastElementChild as HTMLLIElement;
       lastItem.focus();
     }
 
-    if (wasMultiSelectKeyUsed(event)) {
-      event.preventDefault();
+    if (isMultiSelection) {
       multiSelectionFuncs.multiSelectByKeybord(item.id, index - 1);
+    } else {
+      multiSelectionFuncs.toggleSelectionByKeybord(item.id, index, "ArrowUp");
     }
   };
 
   const onArrowDown = (event: KeyboardEvent<HTMLLIElement>) => {
+    event.preventDefault();
+
     const nextLi = event.currentTarget.nextElementSibling;
+    const isMultiSelection = wasMultiSelectKeyUsed(event);
 
     if (nextLi) {
       const prevItem = nextLi as HTMLLIElement;
       prevItem.focus();
-    } else {
+    } else if (!isMultiSelection) {
       const firstItem = event.currentTarget.parentElement
         ?.firstElementChild as HTMLLIElement;
       firstItem.focus();
     }
 
-    if (wasMultiSelectKeyUsed(event)) {
-      event.preventDefault();
+    if (isMultiSelection) {
       multiSelectionFuncs.multiSelectByKeybord(item.id, index + 1);
+    } else {
+      multiSelectionFuncs.toggleSelectionByKeybord(item.id, index, "ArrowDown");
     }
   };
 
@@ -83,6 +91,13 @@ export default function Item({
       case "Enter":
         event.preventDefault();
         performAction(event);
+        break;
+      case "Tab":
+        multiSelectionFuncs.toggleSelectionByKeybord(
+          item.id,
+          index,
+          wasMultiSelectKeyUsed(event) ? "Shift+Tab" : "Tab",
+        );
     }
   };
 
