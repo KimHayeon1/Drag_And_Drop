@@ -3,7 +3,6 @@ type Columns = "column1" | "column2" | "column3" | "column4";
 type ItemType = {
   id: string;
   content: string;
-  column: Columns;
 };
 
 type Items = { [key in Columns]: ItemType[] };
