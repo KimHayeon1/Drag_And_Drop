@@ -122,7 +122,7 @@ export default function useDragDrop(
       newItems[destinationColumn].splice(destination.index, 0, ...dropItems);
       setItems(newItems);
     },
-    [items],
+    [items, selectedItems],
   );
 
   const onDragUpdate = useCallback(
