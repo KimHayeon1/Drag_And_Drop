@@ -90,11 +90,7 @@ export default function useMultiSelect(items: Items) {
     });
   };
 
-  const multiSelectTo = (
-    itemId: string,
-    itemIndex: number,
-    column: Columns,
-  ) => {
+  const multiSelectTo = (itemId: string, itemIndex: number) => {
     if (!selectedItems.selectedItemsId.size) {
       setSelectedItemsToCurrentItem(itemId);
       return;
@@ -103,6 +99,14 @@ export default function useMultiSelect(items: Items) {
     const columnForMultiSelect = columns.find((column) =>
       items[column].map(({ id }) => id).includes(selectedItems.currItem),
     );
+    const column = columns.find((column) =>
+      items[column].map(({ id }) => id).includes(itemId),
+    );
+
+    if (!columnForMultiSelect || !column) {
+      console.error("유효하지 않은 아이템 id입니다.");
+      return;
+    }
 
     if (column !== columnForMultiSelect) {
       return;

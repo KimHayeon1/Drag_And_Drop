@@ -7,7 +7,6 @@ const getItems = (count: number, column: Columns): ItemType[] =>
     id: `item-${index}`,
     content: `item ${index}`,
     column,
-    isDropAble: true,
   }));
 
 const items: Items = {

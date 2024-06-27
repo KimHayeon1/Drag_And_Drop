@@ -4,7 +4,6 @@ type ItemType = {
   id: string;
   content: string;
   column: Columns;
-  isDropAble: boolean;
 };
 
 type Items = { [key in Columns]: ItemType[] };
@@ -16,4 +15,17 @@ type SelectedItems = {
 
 type ItemState = "current" | "selectionGroup" | "draggingGroup" | "default";
 
-export type { ItemType, Items, Columns, SelectedItems, ItemState };
+type MultiSelectionFuncs = {
+  toggleSelectionInGroup: (itemId: string) => void;
+  multiSelectTo: (itemId: string, itemIndex: number) => void;
+  toggleSelection: (itemId: string) => void;
+};
+
+export type {
+  ItemType,
+  Items,
+  Columns,
+  SelectedItems,
+  ItemState,
+  MultiSelectionFuncs,
+};

@@ -3,26 +3,27 @@ import { Draggable, DraggableStateSnapshot } from "react-beautiful-dnd";
 
 import { StyledItem } from "@/DragDrop/StyledDragDrop";
 
-import type { Columns, ItemState, ItemType } from "@/DragDrop/model";
+import type {
+  ItemState,
+  ItemType,
+  MultiSelectionFuncs,
+} from "@/DragDrop/model";
 
 export default function Item({
   item,
   index,
-  column,
-  toggleSelectionInGroup,
-  multiSelectTo,
-  toggleSelection,
+  multiSelectionFuncs,
   itemState,
-  selectedItemsCnt,
+  dragState,
 }: {
   item: ItemType;
   index: number;
-  column: Columns;
-  toggleSelectionInGroup: (itemId: string) => void;
-  multiSelectTo: (itemId: string, itemIndex: number, column: Columns) => void;
-  toggleSelection: (itemId: string) => void;
+  multiSelectionFuncs: MultiSelectionFuncs;
   itemState: ItemState;
-  selectedItemsCnt: number;
+  dragState: {
+    selectedItemsCnt: number;
+    isDropAble: boolean;
+  };
 }) {
   const onKeyDown = (
     event: KeyboardEvent<HTMLLIElement>,
@@ -72,16 +73,16 @@ export default function Item({
 
   const performAction = (event: MouseEvent | KeyboardEvent) => {
     if (wasToggleInSelectionGroupKeyUsed(event)) {
-      toggleSelectionInGroup(item.id);
+      multiSelectionFuncs.toggleSelectionInGroup(item.id);
       return;
     }
 
     if (wasMultiSelectKeyUsed(event)) {
-      multiSelectTo(item.id, index, column);
+      multiSelectionFuncs.multiSelectTo(item.id, index);
       return;
     }
 
-    toggleSelection(item.id);
+    multiSelectionFuncs.toggleSelection(item.id);
   };
 
   return (
@@ -92,14 +93,14 @@ export default function Item({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           $itemState={itemState}
-          $isDropAble={item.isDropAble}
+          $isDropAble={dragState.isDropAble}
           onClick={onClick}
           onKeyDown={(event) => onKeyDown(event, snapshot)}
         >
           {snapshot.isDragging && (
             <div className="selectedItemsCnt">
               <span className="a11y-hidden">선택한 아이템 수</span>
-              {selectedItemsCnt}
+              {dragState.selectedItemsCnt}
             </div>
           )}
           {item.content}

@@ -21,7 +21,7 @@ export default function DragDrop() {
     toggleSelection,
     addItemInSelectionGroup,
   } = useMultiSelect(items);
-  const { onDragEnd, onDragUpdate } = useDragDrop(
+  const { onDragEnd, onDragUpdate, isDropAble } = useDragDrop(
     items,
     setItems,
     selectedItems,
@@ -68,12 +68,16 @@ export default function DragDrop() {
                       key={item.id}
                       item={item}
                       index={index}
-                      column={column}
-                      toggleSelectionInGroup={toggleSelectionInGroup}
-                      multiSelectTo={multiSelectTo}
-                      toggleSelection={toggleSelection}
+                      multiSelectionFuncs={{
+                        toggleSelectionInGroup,
+                        multiSelectTo,
+                        toggleSelection,
+                      }}
                       itemState={itemState}
-                      selectedItemsCnt={selectedItems.selectedItemsId.size}
+                      dragState={{
+                        selectedItemsCnt: selectedItems.selectedItemsId.size,
+                        isDropAble,
+                      }}
                     />
                   );
                 })}

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { DragUpdate, DraggableLocation, DropResult } from "react-beautiful-dnd";
 
 import { columns } from "@/DragDrop/data";
@@ -11,16 +11,7 @@ export default function useDragDrop(
   setItems: Dispatch<SetStateAction<Items>>,
   selectedItems: SelectedItems,
 ) {
-  const setIsDropAble = (source: DraggableLocation, isDropAble: boolean) => {
-    const sourceColumn = source.droppableId as Columns;
-    const sourceIndex = source.index;
-    const newItems = { ...items };
-    newItems[sourceColumn][sourceIndex] = {
-      ...newItems[sourceColumn][sourceIndex],
-      isDropAble: isDropAble,
-    };
-    setItems(newItems);
-  };
+  const [isDropAble, setIsDropAble] = useState(true);
 
   const checkColumnConstraints = (
     source: DraggableLocation,
@@ -35,7 +26,7 @@ export default function useDragDrop(
       (column) => column === destinationColumn,
     );
 
-    return  sourceColumnIndex !== 0 || destinationColumnIndex !== 2;
+    return sourceColumnIndex !== 0 || destinationColumnIndex !== 2;
   };
 
   const checkEvenItemConstraints = (
@@ -101,7 +92,7 @@ export default function useDragDrop(
       }
 
       if (!checkDropConstraints(source, destination)) {
-        setIsDropAble(source, true);
+        setIsDropAble(true);
         return;
       }
 
@@ -141,18 +132,16 @@ export default function useDragDrop(
       }
 
       if (checkDropConstraints(source, destination)) {
-        setIsDropAble(source, true);
+        setIsDropAble(true);
       } else {
-        setIsDropAble(source, false);
+        setIsDropAble(false);
       }
     },
     [items],
   );
 
   return {
-    items,
-    setIsDropAble,
-    checkDropConstraints,
+    isDropAble,
     onDragEnd,
     onDragUpdate,
   };
