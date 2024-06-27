@@ -3,7 +3,7 @@ import { Draggable, DraggableStateSnapshot } from "react-beautiful-dnd";
 
 import { StyledItem } from "@/DragDrop/StyledDragDrop";
 
-import type { Columns, ItemType } from "@/DragDrop/model";
+import type { Columns, ItemState, ItemType } from "@/DragDrop/model";
 
 export default function Item({
   item,
@@ -12,7 +12,7 @@ export default function Item({
   toggleSelectionInGroup,
   multiSelectTo,
   toggleSelection,
-  isSelected,
+  itemState,
 }: {
   item: ItemType;
   index: number;
@@ -20,7 +20,7 @@ export default function Item({
   toggleSelectionInGroup: (itemId: string) => void;
   multiSelectTo: (itemId: string, itemIndex: number, column: Columns) => void;
   toggleSelection: (itemId: string) => void;
-  isSelected: boolean;
+  itemState: ItemState;
 }) {
   const onKeyDown = (
     event: KeyboardEvent<HTMLLIElement>,
@@ -89,9 +89,8 @@ export default function Item({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          $isDragging={snapshot.isDragging}
+          $itemState={itemState}
           $isDropAble={item.isDropAble}
-          $isSelected={isSelected}
           onClick={onClick}
           onKeyDown={(event) => onKeyDown(event, snapshot)}
         >

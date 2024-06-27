@@ -1,4 +1,6 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+import { ItemState } from "@/DragDrop/model";
 
 const StyledWrap = styled.div`
   --grid: 8px;
@@ -27,26 +29,46 @@ const StyledColumn = styled.ul<{ $isDraggingOver: boolean }>`
   }
 `;
 
+const DraggingGroupStyle = css`
+  background: #eee;
+  color: #aaa;
+  outline: none;
+`;
+
+const SelectionGroupStyle = css`
+  outline: 1px solid blue;
+  background: #ddddff;
+`;
+
+const CurrentStyle = css`
+  outline: 2px solid blue;
+  background: #ddddff;
+`;
+
+const DefaultStyle = css`
+  &:hover,
+  &:focus {
+    outline: 1px solid #9999ff;
+    background: #ddddff;
+  }
+`;
+
 const StyledItem = styled.li<{
-  $isDragging: boolean;
+  $itemState: ItemState;
   $isDropAble: boolean;
-  $isSelected: boolean;
 }>`
   padding: calc(var(--grid) * 2);
   text-align: left;
   background: #fff;
-  outline: ${({ $isSelected }) => ($isSelected ? "2px solid blue" : "")};
   outline: ${({ $isDropAble }) => (!$isDropAble ? "2px solid red" : "")};
   user-select: "none";
+  ${({ $itemState }) => $itemState === "draggingGroup" && DraggingGroupStyle}
+  ${({ $itemState }) => $itemState === "selectionGroup" && SelectionGroupStyle}
+  ${({ $itemState }) => $itemState === "current" && CurrentStyle}
+  ${({ $itemState }) => $itemState === "default" && DefaultStyle}
 
   & + & {
     margin: var(--grid) 0 0;
-  }
-
-  &:hover,
-  &:focus {
-    outline: ${({ $isSelected }) =>
-      $isSelected ? "2px solid blue" : "2px solid #9999ff"};
   }
 `;
 

@@ -8,10 +8,11 @@ import { StyledColumn, StyledWrap } from "@/DragDrop/StyledDragDrop";
 import useDragDrop from "@/DragDrop/useDragDrop";
 import useMultiSelect from "@/DragDrop/useMultiSelect";
 
-import type { Items } from "@/DragDrop/model";
+import type { Items, ItemState } from "@/DragDrop/model";
 
 export default function DragDrop() {
   const [items, setItems] = useState<Items>(itemsData);
+  const [isDragging, setIsDragging] = useState(false);
 
   const {
     selectedItems,
@@ -28,9 +29,15 @@ export default function DragDrop() {
 
   return (
     <DragDropContext
-      onDragEnd={onDragEnd}
+      onDragEnd={(e) => {
+        setIsDragging(false);
+        onDragEnd(e);
+      }}
       onDragUpdate={onDragUpdate}
-      onDragStart={addItemInSelectionGroup}
+      onDragStart={(e) => {
+        setIsDragging(true);
+        addItemInSelectionGroup(e);
+      }}
     >
       <StyledWrap>
         {columns.map((column) => (
@@ -42,22 +49,33 @@ export default function DragDrop() {
                 $isDraggingOver={snapshot.isDraggingOver}
               >
                 <h2>{column}</h2>
-                {items[column].map((item, index) => (
-                  <Item
-                    key={item.id}
-                    item={item}
-                    index={index}
-                    column={column}
-                    toggleSelectionInGroup={toggleSelectionInGroup}
-                    multiSelectTo={multiSelectTo}
-                    toggleSelection={toggleSelection}
-                    isSelected={
-                      selectedItems
-                        ? selectedItems.selectedItemsId.has(item.id)
-                        : false
-                    }
-                  />
-                ))}
+                {items[column].map((item, index) => {
+                  let itemState: ItemState = "default";
+
+                  if (selectedItems.startItemForMultiSelect === item.id) {
+                    itemState = "current";
+                  } else if (
+                    isDragging &&
+                    selectedItems.selectedItemsId.has(item.id)
+                  ) {
+                    itemState = "draggingGroup";
+                  } else if (selectedItems.selectedItemsId.has(item.id)) {
+                    itemState = "selectionGroup";
+                  }
+
+                  return (
+                    <Item
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      column={column}
+                      toggleSelectionInGroup={toggleSelectionInGroup}
+                      multiSelectTo={multiSelectTo}
+                      toggleSelection={toggleSelection}
+                      itemState={itemState}
+                    />
+                  );
+                })}
                 {provided.placeholder}
               </StyledColumn>
             )}

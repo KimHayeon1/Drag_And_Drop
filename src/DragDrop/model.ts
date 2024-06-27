@@ -14,4 +14,6 @@ type SelectedItems = {
   selectedItemsId: Set<string>;
 };
 
-export type { ItemType, Items, Columns, SelectedItems };
+type ItemState = "current" | "selectionGroup" | "draggingGroup" | "default";
+
+export type { ItemType, Items, Columns, SelectedItems, ItemState };
