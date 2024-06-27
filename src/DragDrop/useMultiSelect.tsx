@@ -8,7 +8,7 @@ import type { Columns, ItemType, Items, SelectedItems } from "@/DragDrop/model";
 const getMultiSelectionItems = (
   start: number,
   end: number,
-  columnItems: ItemType[],
+  columnItems: readonly ItemType[],
 ) => {
   return columnItems
     .filter((_, i) => start <= i && i <= end)
