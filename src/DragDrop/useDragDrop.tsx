@@ -107,16 +107,13 @@ export default function useDragDrop(
 
       const dropItems: ItemType[] = [];
       columns.forEach((column) => {
-        newItems[column].push(
-          ...items[column].filter(
-            ({ id }) => !selectedItems.selectedItemsId.has(id),
-          ),
-        );
-        dropItems.push(
-          ...items[column].filter(({ id }) =>
-            selectedItems.selectedItemsId.has(id),
-          ),
-        );
+        items[column].forEach((item) => {
+          if (selectedItems.selectedItemsId.has(item.id)) {
+            dropItems.push(item);
+          } else {
+            newItems[column].push(item);
+          }
+        });
       });
 
       newItems[destinationColumn].splice(destination.index, 0, ...dropItems);
