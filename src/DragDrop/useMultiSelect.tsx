@@ -30,10 +30,10 @@ export default function useMultiSelect(items: Items) {
       }
     };
 
-    document.addEventListener("click", deselectAll);
+    document.addEventListener("mousedown", deselectAll);
 
     return () => {
-      document.removeEventListener("click", deselectAll);
+      document.removeEventListener("mousedown", deselectAll);
     };
   }, []);
 
