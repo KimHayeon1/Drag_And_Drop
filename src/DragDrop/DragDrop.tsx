@@ -52,7 +52,7 @@ export default function DragDrop() {
                 {items[column].map((item, index) => {
                   let itemState: ItemState = "default";
 
-                  if (selectedItems.startItemForMultiSelect === item.id) {
+                  if (selectedItems.currItem === item.id) {
                     itemState = "current";
                   } else if (
                     isDragging &&

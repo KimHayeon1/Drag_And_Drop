@@ -18,7 +18,7 @@ const items: Items = {
 };
 
 const initialSelectedItems: SelectedItems = {
-  startItemForMultiSelect: "",
+  currItem: "",
   selectedItemsId: new Set(),
 };
 

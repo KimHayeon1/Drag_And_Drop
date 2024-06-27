@@ -10,7 +10,7 @@ type ItemType = {
 type Items = { [key in Columns]: ItemType[] };
 
 type SelectedItems = {
-  startItemForMultiSelect: string;
+  currItem: string;
   selectedItemsId: Set<string>;
 };
 

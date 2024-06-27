@@ -21,7 +21,7 @@ export default function useMultiSelect(items: Items) {
 
   const setSelectedItemsToCurrentItem = (itemId: string) => {
     setSelectedItems({
-      startItemForMultiSelect: itemId,
+      currItem: itemId,
       selectedItemsId: new Set([itemId]),
     });
   };
@@ -67,7 +67,7 @@ export default function useMultiSelect(items: Items) {
     }
 
     setSelectedItems({
-      startItemForMultiSelect: itemId,
+      currItem: itemId,
       selectedItemsId: newSelectedItemsId,
     });
   };
@@ -83,9 +83,7 @@ export default function useMultiSelect(items: Items) {
     }
 
     const columnForMultiSelect = columns.find((column) =>
-      items[column]
-        .map(({ id }) => id)
-        .includes(selectedItems.startItemForMultiSelect),
+      items[column].map(({ id }) => id).includes(selectedItems.currItem),
     );
 
     if (column !== columnForMultiSelect) {
@@ -95,7 +93,7 @@ export default function useMultiSelect(items: Items) {
     let multiSelectionItems;
     let nonConsecutiveItems;
     const startIndexForMultiSelect = items[columnForMultiSelect].findIndex(
-      ({ id }) => id === selectedItems.startItemForMultiSelect,
+      ({ id }) => id === selectedItems.currItem,
     );
 
     if (startIndexForMultiSelect < itemIndex) {
@@ -154,7 +152,7 @@ export default function useMultiSelect(items: Items) {
     const id = items[column][source.index].id;
 
     setSelectedItems(({ selectedItemsId }) => ({
-      startItemForMultiSelect: id,
+      currItem: id,
       selectedItemsId: new Set(
         selectedItemsId.size <= 1 ? [id] : [...selectedItemsId, id],
       ),
