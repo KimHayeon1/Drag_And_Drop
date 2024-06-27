@@ -28,11 +28,14 @@ export default function useDragDrop(
   ) => {
     const sourceColumn = source.droppableId as Columns;
     const destinationColumn = destination.droppableId as Columns;
+    const sourceColumnIndex = columns.findIndex(
+      (column) => column === sourceColumn,
+    );
+    const destinationColumnIndex = columns.findIndex(
+      (column) => column === destinationColumn,
+    );
 
-    const isFirstColumnToThirdColumn =
-      sourceColumn === "column1" && destinationColumn === "column3";
-
-    return !isFirstColumnToThirdColumn;
+    return  sourceColumnIndex !== 0 || destinationColumnIndex !== 2;
   };
 
   const checkEvenItemConstraints = (
