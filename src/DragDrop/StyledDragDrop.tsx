@@ -61,8 +61,7 @@ const CurrentStyle = css`
 const DefaultStyle = css`
   &:hover,
   &:focus {
-    outline: 1px solid #9999ff;
-    background: #ddddff;
+    outline: 1px solid blue;
   }
 `;
 

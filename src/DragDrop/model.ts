@@ -18,6 +18,7 @@ type MultiSelectionFuncs = {
   toggleSelectionInGroup: (itemId: string) => void;
   multiSelectTo: (itemId: string, itemIndex: number) => void;
   toggleSelection: (itemId: string) => void;
+  multiSelectByKeybord: (itemId: string, itemIndex: number) => void;
 };
 
 export type {

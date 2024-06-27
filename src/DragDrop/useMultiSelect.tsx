@@ -37,6 +37,28 @@ export default function useMultiSelect(items: Items) {
     };
   }, []);
 
+  const findItemColumn = (itemId: string) => {
+    const column = columns.find((column) =>
+      items[column].map(({ id }) => id).includes(itemId),
+    );
+
+    if (!column) {
+      console.error("유효하지 않은 id입니다.");
+    }
+
+    return column;
+  };
+
+  const findItemIndex = (itemId: string, column: Columns) => {
+    const index = items[column].findIndex(({ id }) => id === itemId);
+
+    if (index === -1) {
+      console.error("유효하지 않은 id입니다.");
+    }
+
+    return index;
+  };
+
   const setSelectedItemsToCurrentItem = (itemId: string) => {
     setSelectedItems({
       currItem: itemId,
@@ -96,15 +118,10 @@ export default function useMultiSelect(items: Items) {
       return;
     }
 
-    const columnForMultiSelect = columns.find((column) =>
-      items[column].map(({ id }) => id).includes(selectedItems.currItem),
-    );
-    const column = columns.find((column) =>
-      items[column].map(({ id }) => id).includes(itemId),
-    );
+    const columnForMultiSelect = findItemColumn(selectedItems.currItem);
+    const column = findItemColumn(itemId);
 
     if (!columnForMultiSelect || !column) {
-      console.error("유효하지 않은 아이템 id입니다.");
       return;
     }
 
@@ -114,8 +131,9 @@ export default function useMultiSelect(items: Items) {
 
     let multiSelectionItems;
     let nonConsecutiveItems;
-    const startIndexForMultiSelect = items[columnForMultiSelect].findIndex(
-      ({ id }) => id === selectedItems.currItem,
+    const startIndexForMultiSelect = findItemIndex(
+      selectedItems.currItem,
+      columnForMultiSelect,
     );
 
     if (startIndexForMultiSelect < itemIndex) {
@@ -181,11 +199,42 @@ export default function useMultiSelect(items: Items) {
     }));
   };
 
+  const multiSelectByKeybord = (prevItemId: string, itemIndex: number) => {
+    if (!selectedItems.currItem) {
+      return;
+    }
+
+    const column = findItemColumn(prevItemId);
+
+    if (!column) {
+      return;
+    }
+
+    const currIndex = findItemIndex(selectedItems.currItem, column);
+    let newSelectedItemsId: Set<string>;
+
+    if (currIndex < itemIndex) {
+      newSelectedItemsId = new Set(
+        items[column].slice(currIndex, itemIndex + 1).map(({ id }) => id),
+      );
+    } else {
+      newSelectedItemsId = new Set(
+        items[column].slice(itemIndex, currIndex + 1).map(({ id }) => id),
+      );
+    }
+
+    setSelectedItems((prev) => ({
+      ...prev,
+      selectedItemsId: newSelectedItemsId,
+    }));
+  };
+
   return {
     selectedItems,
     toggleSelectionInGroup,
     multiSelectTo,
     toggleSelection,
     addItemInSelectionGroup,
+    multiSelectByKeybord,
   };
 }

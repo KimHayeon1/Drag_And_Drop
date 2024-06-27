@@ -25,6 +25,42 @@ export default function Item({
     isDropAble: boolean;
   };
 }) {
+  const onArrowUp = (event: KeyboardEvent<HTMLLIElement>) => {
+    const prevLi = event.currentTarget.previousElementSibling;
+
+    if (prevLi) {
+      const prevItem = prevLi as HTMLLIElement;
+      prevItem.focus();
+    } else {
+      const lastItem = event.currentTarget.parentElement
+        ?.lastElementChild as HTMLLIElement;
+      lastItem.focus();
+    }
+
+    if (wasMultiSelectKeyUsed(event)) {
+      event.preventDefault();
+      multiSelectionFuncs.multiSelectByKeybord(item.id, index - 1);
+    }
+  };
+
+  const onArrowDown = (event: KeyboardEvent<HTMLLIElement>) => {
+    const nextLi = event.currentTarget.nextElementSibling;
+
+    if (nextLi) {
+      const prevItem = nextLi as HTMLLIElement;
+      prevItem.focus();
+    } else {
+      const firstItem = event.currentTarget.parentElement
+        ?.firstElementChild as HTMLLIElement;
+      firstItem.focus();
+    }
+
+    if (wasMultiSelectKeyUsed(event)) {
+      event.preventDefault();
+      multiSelectionFuncs.multiSelectByKeybord(item.id, index + 1);
+    }
+  };
+
   const onKeyDown = (
     event: KeyboardEvent<HTMLLIElement>,
     snapshot: DraggableStateSnapshot,
@@ -37,16 +73,22 @@ export default function Item({
       return;
     }
 
-    if (event.key !== "Enter") {
-      return;
+    switch (event.key) {
+      case "ArrowUp":
+        onArrowUp(event);
+        break;
+      case "ArrowDown":
+        onArrowDown(event);
+        break;
+      case "Enter":
+        event.preventDefault();
+        performAction(event);
     }
-
-    event.preventDefault();
-
-    performAction(event);
   };
 
   const onClick = (event: MouseEvent<HTMLLIElement>) => {
+    event.currentTarget.focus();
+
     if (event.defaultPrevented) {
       return;
     }
@@ -97,7 +139,7 @@ export default function Item({
           onClick={onClick}
           onKeyDown={(event) => onKeyDown(event, snapshot)}
         >
-          {snapshot.isDragging && (
+          {snapshot.isDragging && dragState.selectedItemsCnt > 1 && (
             <div className="selectedItemsCnt">
               <span className="a11y-hidden">선택한 아이템 수</span>
               {dragState.selectedItemsCnt}
