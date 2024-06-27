@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FocusEvent, useEffect, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 import { columns } from "@/DragDrop/data";
@@ -17,6 +17,7 @@ import type { Items, ItemState } from "@/DragDrop/model";
 export default function DragDrop() {
   const [items, setItems] = useState<Items>(itemsData);
   const [isDragging, setIsDragging] = useState(false);
+  const [isTabPressed, setIsTabPressed] = useState(false);
 
   const {
     selectedItems,
@@ -25,13 +26,43 @@ export default function DragDrop() {
     toggleSelection,
     toggleSelectionByKeybord,
     multiSelectByKeybord,
+    selectItem,
     addItemInSelectionGroup,
+    initializeSelectedItems,
   } = useMultiSelect(items);
   const { onDragEnd, onDragUpdate, isDropAble } = useDragDrop(
     items,
     setItems,
     selectedItems,
   );
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        setIsTabPressed(true);
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        setIsTabPressed(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [isTabPressed]);
+
+  const onBlur = (e: FocusEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      initializeSelectedItems();
+    }
+  };
 
   return (
     <StyledMain>
@@ -47,7 +78,7 @@ export default function DragDrop() {
           addItemInSelectionGroup(e);
         }}
       >
-        <StyledWrap>
+        <StyledWrap onBlur={onBlur}>
           {columns.map((column) => (
             <Droppable key={column} droppableId={column}>
               {(provided, snapshot) => (
@@ -83,6 +114,7 @@ export default function DragDrop() {
                             toggleSelection,
                             toggleSelectionByKeybord,
                             multiSelectByKeybord,
+                            selectItem,
                           }}
                           itemState={itemState}
                           dragState={{
@@ -90,6 +122,7 @@ export default function DragDrop() {
                               selectedItems.selectedItemsId.size,
                             isDropAble,
                           }}
+                          isTabPressed={isTabPressed}
                         />
                       );
                     })}

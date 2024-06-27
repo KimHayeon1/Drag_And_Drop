@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DragStart } from "react-beautiful-dnd";
 
 import { columns, initialSelectedItems } from "@/DragDrop/data";
@@ -29,23 +29,9 @@ export default function useMultiSelect(items: Items) {
   const [selectedItems, setSelectedItems] =
     useState<SelectedItems>(initialSelectedItems);
 
-  useEffect(() => {
-    const deselectAll = (e: MouseEvent) => {
-      if (!(e.target instanceof HTMLElement)) {
-        return;
-      }
-
-      if (!e.target.closest("li")) {
-        setSelectedItems(initialSelectedItems);
-      }
-    };
-
-    document.addEventListener("mousedown", deselectAll);
-
-    return () => {
-      document.removeEventListener("mousedown", deselectAll);
-    };
-  }, []);
+  const initializeSelectedItems = () => {
+    setSelectedItems(initialSelectedItems);
+  };
 
   const findItemColumn = (itemId: string) => {
     const column = columns.find((column) =>
@@ -69,7 +55,7 @@ export default function useMultiSelect(items: Items) {
     return index;
   };
 
-  const setSelectedItemsToCurrentItem = (itemId: string) => {
+  const selectItem = (itemId: string) => {
     setSelectedItems({
       currItem: itemId,
       selectedItemsId: new Set([itemId]),
@@ -124,7 +110,7 @@ export default function useMultiSelect(items: Items) {
 
   const multiSelectTo: MultiSelectTo = (itemId: string, itemIndex: number) => {
     if (!selectedItems.selectedItemsId.size) {
-      setSelectedItemsToCurrentItem(itemId);
+      selectItem(itemId);
       return;
     }
 
@@ -184,16 +170,16 @@ export default function useMultiSelect(items: Items) {
     const hasSelectedItems = selectedItems.selectedItemsId.size > 1;
 
     if (hasSelectedItems) {
-      setSelectedItemsToCurrentItem(itemId);
+      selectItem(itemId);
       return;
     }
 
     const isPrevSelected = selectedItems.selectedItemsId.has(itemId);
 
     if (isPrevSelected) {
-      setSelectedItems(initialSelectedItems);
+      initializeSelectedItems();
     } else {
-      setSelectedItemsToCurrentItem(itemId);
+      selectItem(itemId);
     }
   };
 
@@ -209,48 +195,6 @@ export default function useMultiSelect(items: Items) {
     }));
   };
 
-  const toggleSelectionByTab = (column: Columns, prevItemIndex: number) => {
-    if (items[column].length !== prevItemIndex + 1) {
-      const { id } = items[column][prevItemIndex + 1];
-      setSelectedItemsToCurrentItem(id);
-      return;
-    }
-
-    const columnIndex = columns.findIndex((v) => v === column);
-    const nextColumn = columns[columnIndex + 1];
-
-    if (nextColumn && items[nextColumn].length) {
-      const { id } = items[nextColumn][0];
-      setSelectedItemsToCurrentItem(id);
-      return;
-    }
-
-    setSelectedItems(initialSelectedItems);
-  };
-
-  const toggleSelectionByShiftTab = (
-    column: Columns,
-    prevItemIndex: number,
-  ) => {
-    console.log(column, prevItemIndex);
-    if (prevItemIndex !== 0) {
-      const { id } = items[column][prevItemIndex - 1];
-      setSelectedItemsToCurrentItem(id);
-      return;
-    }
-
-    const columnIndex = columns.findIndex((v) => v === column);
-    const prevColumn = columns[columnIndex - 1];
-
-    if (prevColumn && items[prevColumn].length) {
-      const [{ id }] = items[prevColumn].slice(-1);
-      setSelectedItemsToCurrentItem(id);
-      return;
-    }
-
-    setSelectedItems(initialSelectedItems);
-  };
-
   const toggleSelectionByArrowUp = (column: Columns, prevItemIndex: number) => {
     let id;
 
@@ -259,7 +203,7 @@ export default function useMultiSelect(items: Items) {
     } else {
       id = items[column][prevItemIndex - 1].id;
     }
-    setSelectedItemsToCurrentItem(id);
+    selectItem(id);
   };
 
   const toggleSelectionByArrowDown = (
@@ -274,13 +218,13 @@ export default function useMultiSelect(items: Items) {
       id = items[column][prevItemIndex + 1].id;
     }
 
-    setSelectedItemsToCurrentItem(id);
+    selectItem(id);
   };
 
   const toggleSelectionByKeybord: ToggleSelectionByKeybord = (
     prevItemId: string,
     prevItemIndex: number,
-    key: "ArrowUp" | "ArrowDown" | "Tab" | "Shift+Tab",
+    key: "ArrowUp" | "ArrowDown",
   ) => {
     const column = findItemColumn(prevItemId);
 
@@ -294,12 +238,6 @@ export default function useMultiSelect(items: Items) {
         break;
       case "ArrowDown":
         toggleSelectionByArrowDown(column, prevItemIndex);
-        break;
-      case "Tab":
-        toggleSelectionByTab(column, prevItemIndex);
-        break;
-      case "Shift+Tab":
-        toggleSelectionByShiftTab(column, prevItemIndex);
     }
   };
 
@@ -341,5 +279,7 @@ export default function useMultiSelect(items: Items) {
     addItemInSelectionGroup,
     toggleSelectionByKeybord,
     multiSelectByKeybord,
+    selectItem,
+    initializeSelectedItems,
   };
 }

@@ -62,10 +62,6 @@ const DefaultStyle = css`
   &:hover {
     outline: 1px solid blue;
   }
-
-  &:focus {
-    ${() => CurrentStyle}
-  }
 `;
 
 const disabledDropStyle = css`

@@ -20,9 +20,10 @@ type ToggleSelection = (itemId: string) => void;
 type ToggleSelectionByKeybord = (
   prevItemId: string,
   prevItemIndex: number,
-  key: "ArrowUp" | "ArrowDown" | "Tab" | "Shift+Tab",
+  key: "ArrowUp" | "ArrowDown",
 ) => void;
 type MultiSelectByKeybord = (itemId: string, itemIndex: number) => void;
+type SelectItem = (itemId: string) => void;
 
 type MultiSelectionFuncs = {
   toggleSelectionInGroup: ToggleSelectionInGroup;
@@ -30,6 +31,7 @@ type MultiSelectionFuncs = {
   toggleSelection: ToggleSelection;
   toggleSelectionByKeybord: ToggleSelectionByKeybord;
   multiSelectByKeybord: MultiSelectByKeybord;
+  selectItem: SelectItem;
 };
 
 export type {

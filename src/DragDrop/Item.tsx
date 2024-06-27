@@ -15,6 +15,7 @@ export default function Item({
   multiSelectionFuncs,
   itemState,
   dragState,
+  isTabPressed,
 }: {
   item: ItemType;
   index: number;
@@ -24,6 +25,7 @@ export default function Item({
     selectedItemsCnt: number;
     isDropAble: boolean;
   };
+  isTabPressed: boolean;
 }) {
   const onArrowUp = (event: KeyboardEvent<HTMLLIElement>) => {
     event.preventDefault();
@@ -91,13 +93,6 @@ export default function Item({
       case "Enter":
         event.preventDefault();
         performAction(event);
-        break;
-      case "Tab":
-        multiSelectionFuncs.toggleSelectionByKeybord(
-          item.id,
-          index,
-          wasMultiSelectKeyUsed(event) ? "Shift+Tab" : "Tab",
-        );
     }
   };
 
@@ -142,6 +137,12 @@ export default function Item({
     multiSelectionFuncs.toggleSelection(item.id);
   };
 
+  const onFocus = () => {
+    if (isTabPressed) {
+      multiSelectionFuncs.selectItem(item.id);
+    }
+  };
+
   return (
     <Draggable draggableId={item.id} index={index}>
       {(provided, snapshot) => (
@@ -153,6 +154,7 @@ export default function Item({
           $isDropAble={dragState.isDropAble}
           onClick={onClick}
           onKeyDown={(event) => onKeyDown(event, snapshot)}
+          onFocus={onFocus}
         >
           {snapshot.isDragging && dragState.selectedItemsCnt > 1 && (
             <div className="selectedItemsCnt">
