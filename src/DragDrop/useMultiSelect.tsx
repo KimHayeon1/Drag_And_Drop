@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DragStart } from "react-beautiful-dnd";
 
 import { columns, initialSelectedItems } from "@/DragDrop/data";
@@ -32,6 +32,24 @@ export default function useMultiSelect(items: Items) {
   const initializeSelectedItems = () => {
     setSelectedItems(initialSelectedItems);
   };
+
+  useEffect(() => {
+    const deselectAll = (e: MouseEvent) => {
+      if (!(e.target instanceof HTMLElement)) {
+        return;
+      }
+
+      if (!e.target.closest("li")) {
+        initializeSelectedItems();
+      }
+    };
+
+    document.addEventListener("mousedown", deselectAll);
+
+    return () => {
+      document.removeEventListener("mousedown", deselectAll);
+    };
+  }, []);
 
   const findItemColumn = (itemId: string) => {
     const column = columns.find((column) =>
@@ -251,7 +269,6 @@ export default function useMultiSelect(items: Items) {
       return;
     }
 
-    // index 대신 keycod?
     const currIndex = findItemIndex(selectedItems.currItem, column);
     let newSelectedItemsId: Set<string>;
 
