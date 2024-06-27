@@ -52,4 +52,4 @@
 
 <br><br>
 
-https://github.com/KimHayeon1/secret/assets/108985221/af179f79-7c8d-48c5-a9a6-ebb1b360cc14
+https://github.com/KimHayeon1/secret/assets/108985221/4ee14b1c-4516-4619-9d26-1360a97232e3
