@@ -73,6 +73,7 @@ export default function DragDrop() {
                       multiSelectTo={multiSelectTo}
                       toggleSelection={toggleSelection}
                       itemState={itemState}
+                      selectedItemsCnt={selectedItems.selectedItemsId.size}
                     />
                   );
                 })}

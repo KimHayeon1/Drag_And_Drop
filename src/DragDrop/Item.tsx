@@ -13,6 +13,7 @@ export default function Item({
   multiSelectTo,
   toggleSelection,
   itemState,
+  selectedItemsCnt,
 }: {
   item: ItemType;
   index: number;
@@ -21,6 +22,7 @@ export default function Item({
   multiSelectTo: (itemId: string, itemIndex: number, column: Columns) => void;
   toggleSelection: (itemId: string) => void;
   itemState: ItemState;
+  selectedItemsCnt: number;
 }) {
   const onKeyDown = (
     event: KeyboardEvent<HTMLLIElement>,
@@ -94,6 +96,12 @@ export default function Item({
           onClick={onClick}
           onKeyDown={(event) => onKeyDown(event, snapshot)}
         >
+          {snapshot.isDragging && (
+            <div className="selectedItemsCnt">
+              <span className="a11y-hidden">선택한 아이템 수</span>
+              {selectedItemsCnt}
+            </div>
+          )}
           {item.content}
         </StyledItem>
       )}

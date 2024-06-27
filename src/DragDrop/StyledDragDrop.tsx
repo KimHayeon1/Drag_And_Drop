@@ -62,6 +62,7 @@ const StyledItem = styled.li<{
   $itemState: ItemState;
   $isDropAble: boolean;
 }>`
+  position: relative;
   padding: calc(var(--grid) * 2);
   text-align: left;
   background: #fff;
@@ -74,6 +75,23 @@ const StyledItem = styled.li<{
 
   & + & {
     margin: var(--grid) 0 0;
+  }
+
+  .selectedItemsCnt {
+    position: absolute;
+    right: -16px;
+    top: -16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    font-size: var(--title-s);
+
+    aspect-ratio: 1/1;
+    font-weight: 700;
+    border-radius: 50%;
+    background: blue;
+    color: white;
   }
 `;
 
