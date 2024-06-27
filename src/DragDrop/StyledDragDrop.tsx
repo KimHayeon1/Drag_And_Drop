@@ -84,7 +84,8 @@ const StyledItem = styled.li<{
   ${({ $itemState }) => $itemState === "selectionGroup" && SelectionGroupStyle}
   ${({ $itemState }) => $itemState === "current" && CurrentStyle}
   ${({ $itemState }) => $itemState === "default" && DefaultStyle}
-  ${({ $isDropAble }) => !$isDropAble && disabledDropStyle}
+  ${({ $isDropAble, $itemState }) =>
+    $itemState === "current" && !$isDropAble && disabledDropStyle}
 
   & + & {
     margin: var(--grid) 0 0;
