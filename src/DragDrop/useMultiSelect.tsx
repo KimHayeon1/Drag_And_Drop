@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DragStart } from "react-beautiful-dnd";
 
 import { columns, initialSelectedItems } from "@/DragDrop/data";
@@ -18,6 +18,24 @@ const getMultiSelectionItems = (
 export default function useMultiSelect(items: Items) {
   const [selectedItems, setSelectedItems] =
     useState<SelectedItems>(initialSelectedItems);
+
+  useEffect(() => {
+    const deselectAll = (e: MouseEvent) => {
+      if (!(e.target instanceof HTMLElement)) {
+        return;
+      }
+
+      if (!e.target.closest("li")) {
+        setSelectedItems(initialSelectedItems);
+      }
+    };
+
+    document.addEventListener("click", deselectAll);
+
+    return () => {
+      document.removeEventListener("click", deselectAll);
+    };
+  }, []);
 
   const setSelectedItemsToCurrentItem = (itemId: string) => {
     setSelectedItems({
