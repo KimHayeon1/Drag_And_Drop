@@ -1,4 +1,4 @@
-type Columns = "column1" | "column2" | "column3" | "column4";
+type Columns = "Todo" | "In Progress" | "Done" | "No Status";
 
 type ItemType = {
   id: string;

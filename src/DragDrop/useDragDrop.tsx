@@ -99,10 +99,10 @@ export default function useDragDrop(
       const destinationColumn = destination.droppableId as Columns;
 
       const newItems: Items = {
-        column1: [],
-        column2: [],
-        column3: [],
-        column4: [],
+        "No Status": [],
+        Todo: [],
+        "In Progress": [],
+        Done: [],
       };
 
       const dropItems: ItemType[] = [];

@@ -2,23 +2,36 @@ import styled, { css } from "styled-components";
 
 import { ItemState } from "@/DragDrop/model";
 
-const StyledWrap = styled.div`
+const StyledMain = styled.main`
   --grid: 8px;
 
-  padding: calc(var(--grid) * 3);
+  padding: 0 calc(var(--grid) * 3) calc(var(--grid) * 3);
+
+  h1 {
+    margin: calc(var(--grid) * 5) 0 calc(var(--grid) * 4);
+    text-align: center;
+    font-size: var(--title-m);
+  }
+`;
+
+const StyledWrap = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: calc(var(--grid) * 2);
-  width: 100vw;
 `;
 
-const StyledColumn = styled.ul<{ $isDraggingOver: boolean }>`
+const StyledColumn = styled.section<{ $isDraggingOver: boolean }>`
   padding: var(--grid);
   width: calc((100% - var(--grid) * 6) / 4);
   flex-grow: 1;
   background: ${({ $isDraggingOver }) => ($isDraggingOver ? "#bbb" : "#ddd")};
   color: #111;
   text-align: center;
+
+  h2 {
+    margin: calc(var(--grid) * 1.5) 0;
+    font-size: var(--title-s);
+  }
 
   @media (max-width: 768px) {
     width: calc((100% - var(--grid) * 2) / 2);
@@ -95,4 +108,4 @@ const StyledItem = styled.li<{
   }
 `;
 
-export { StyledWrap, StyledColumn, StyledItem };
+export { StyledMain, StyledWrap, StyledColumn, StyledItem };

@@ -9,11 +9,23 @@ const GlobalStyle = createGlobalStyle`
     font-size: 62.5%;
     --text-l: 1.6rem;
     --title-s: 2rem;
+    --title-m: 2.4rem;
+    --title-l: 3.2rem;
   }
 
   body {
     margin: 0;
     font-size: var(--text-l);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    font-size: inherit;
   }
 
   button {
@@ -26,8 +38,9 @@ const GlobalStyle = createGlobalStyle`
     background-color: inherit;
   }
 
-  ul {
+  ul, li {
     margin: 0;
+    padding: 0;
     list-style: none;
   }
 

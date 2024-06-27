@@ -1,6 +1,6 @@
 import type { Columns, ItemType, Items, SelectedItems } from "@/DragDrop/model";
 
-const columns: Columns[] = ["column1", "column2", "column3", "column4"];
+const columns: Columns[] = ["No Status", "Todo", "In Progress", "Done"];
 
 const getItems = (count: number): ItemType[] =>
   Array.from({ length: count }, (_, index) => ({
@@ -9,10 +9,10 @@ const getItems = (count: number): ItemType[] =>
   }));
 
 const items: Items = {
-  column1: getItems(10),
-  column2: [],
-  column3: [],
-  column4: [],
+  "No Status": getItems(10),
+  Todo: [],
+  "In Progress": [],
+  Done: [],
 };
 
 const initialSelectedItems: SelectedItems = {

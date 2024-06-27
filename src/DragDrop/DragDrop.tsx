@@ -4,7 +4,11 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { columns } from "@/DragDrop/data";
 import { items as itemsData } from "@/DragDrop/data";
 import Item from "@/DragDrop/Item";
-import { StyledColumn, StyledWrap } from "@/DragDrop/StyledDragDrop";
+import {
+  StyledColumn,
+  StyledMain,
+  StyledWrap,
+} from "@/DragDrop/StyledDragDrop";
 import useDragDrop from "@/DragDrop/useDragDrop";
 import useMultiSelect from "@/DragDrop/useMultiSelect";
 
@@ -28,65 +32,71 @@ export default function DragDrop() {
   );
 
   return (
-    <DragDropContext
-      onDragEnd={(e) => {
-        setIsDragging(false);
-        onDragEnd(e);
-      }}
-      onDragUpdate={onDragUpdate}
-      onDragStart={(e) => {
-        setIsDragging(true);
-        addItemInSelectionGroup(e);
-      }}
-    >
-      <StyledWrap>
-        {columns.map((column) => (
-          <Droppable key={column} droppableId={column}>
-            {(provided, snapshot) => (
-              <StyledColumn
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                $isDraggingOver={snapshot.isDraggingOver}
-              >
-                <h2>{column}</h2>
-                {items[column].map((item, index) => {
-                  let itemState: ItemState = "default";
+    <StyledMain>
+      <h1>BUCKET LIST</h1>
+      <DragDropContext
+        onDragEnd={(e) => {
+          setIsDragging(false);
+          onDragEnd(e);
+        }}
+        onDragUpdate={onDragUpdate}
+        onDragStart={(e) => {
+          setIsDragging(true);
+          addItemInSelectionGroup(e);
+        }}
+      >
+        <StyledWrap>
+          {columns.map((column) => (
+            <Droppable key={column} droppableId={column}>
+              {(provided, snapshot) => (
+                <StyledColumn
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  $isDraggingOver={snapshot.isDraggingOver}
+                >
+                  <h2>{column}</h2>
+                  <ul>
+                    {items[column].map((item, index) => {
+                      let itemState: ItemState = "default";
 
-                  if (selectedItems.currItem === item.id) {
-                    itemState = "current";
-                  } else if (
-                    isDragging &&
-                    selectedItems.selectedItemsId.has(item.id)
-                  ) {
-                    itemState = "draggingGroup";
-                  } else if (selectedItems.selectedItemsId.has(item.id)) {
-                    itemState = "selectionGroup";
-                  }
+                      if (selectedItems.currItem === item.id) {
+                        itemState = "current";
+                      } else if (
+                        isDragging &&
+                        selectedItems.selectedItemsId.has(item.id)
+                      ) {
+                        itemState = "draggingGroup";
+                      } else if (selectedItems.selectedItemsId.has(item.id)) {
+                        itemState = "selectionGroup";
+                      }
 
-                  return (
-                    <Item
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      multiSelectionFuncs={{
-                        toggleSelectionInGroup,
-                        multiSelectTo,
-                        toggleSelection,
-                      }}
-                      itemState={itemState}
-                      dragState={{
-                        selectedItemsCnt: selectedItems.selectedItemsId.size,
-                        isDropAble,
-                      }}
-                    />
-                  );
-                })}
-                {provided.placeholder}
-              </StyledColumn>
-            )}
-          </Droppable>
-        ))}
-      </StyledWrap>
-    </DragDropContext>
+                      return (
+                        <Item
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          multiSelectionFuncs={{
+                            toggleSelectionInGroup,
+                            multiSelectTo,
+                            toggleSelection,
+                          }}
+                          itemState={itemState}
+                          dragState={{
+                            selectedItemsCnt:
+                              selectedItems.selectedItemsId.size,
+                            isDropAble,
+                          }}
+                        />
+                      );
+                    })}
+                    {provided.placeholder}
+                  </ul>
+                </StyledColumn>
+              )}
+            </Droppable>
+          ))}
+        </StyledWrap>
+      </DragDropContext>
+    </StyledMain>
   );
 }
