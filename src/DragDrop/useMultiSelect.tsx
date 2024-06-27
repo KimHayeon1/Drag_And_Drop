@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DragStart } from "react-beautiful-dnd";
 
-import { initialSelectedItems } from "@/DragDrop/data";
+import { columns, initialSelectedItems } from "@/DragDrop/data";
 
 import type { Columns, ItemType, Items, SelectedItems } from "@/DragDrop/model";
 
@@ -19,16 +19,9 @@ export default function useMultiSelect(items: Items) {
   const [selectedItems, setSelectedItems] =
     useState<SelectedItems>(initialSelectedItems);
 
-  const setSelectedItemsToCurrentItem = (
-    itemId: string,
-    itemIndex: number,
-    column: Columns,
-  ) => {
+  const setSelectedItemsToCurrentItem = (itemId: string) => {
     setSelectedItems({
-      multiSelection: {
-        column,
-        start: itemIndex,
-      },
+      startItemForMultiSelect: itemId,
       selectedItemsId: new Set([itemId]),
     });
   };
@@ -63,11 +56,7 @@ export default function useMultiSelect(items: Items) {
     return nonConsecutiveItems;
   };
 
-  const toggleSelectionInGroup = (
-    itemId: string,
-    itemIndex: number,
-    column: Columns,
-  ) => {
+  const toggleSelectionInGroup = (itemId: string) => {
     const newSelectedItemsId = new Set(selectedItems.selectedItemsId);
     const isPrevSelected = selectedItems.selectedItemsId.has(itemId);
 
@@ -78,10 +67,7 @@ export default function useMultiSelect(items: Items) {
     }
 
     setSelectedItems({
-      multiSelection: {
-        column,
-        start: itemIndex,
-      },
+      startItemForMultiSelect: itemId,
       selectedItemsId: newSelectedItemsId,
     });
   };
@@ -91,44 +77,48 @@ export default function useMultiSelect(items: Items) {
     itemIndex: number,
     column: Columns,
   ) => {
-    if (column !== selectedItems.multiSelection.column) {
+    if (!selectedItems.selectedItemsId.size) {
+      setSelectedItemsToCurrentItem(itemId);
       return;
     }
 
-    const hasSelectedItems = selectedItems.selectedItemsId.size > 1;
+    const columnForMultiSelect = columns.find((column) =>
+      items[column]
+        .map(({ id }) => id)
+        .includes(selectedItems.startItemForMultiSelect),
+    );
 
-    if (hasSelectedItems) {
-      setSelectedItemsToCurrentItem(itemId, itemIndex, column);
+    if (column !== columnForMultiSelect) {
       return;
     }
 
     let multiSelectionItems;
     let nonConsecutiveItems;
-    const {
-      multiSelection: { start },
-    } = selectedItems;
+    const startIndexForMultiSelect = items[columnForMultiSelect].findIndex(
+      ({ id }) => id === selectedItems.startItemForMultiSelect,
+    );
 
-    if (start < itemIndex) {
+    if (startIndexForMultiSelect < itemIndex) {
       nonConsecutiveItems = getNonConsecutiveItems(
-        start,
+        startIndexForMultiSelect,
         itemIndex,
         items[column],
       );
       multiSelectionItems = getMultiSelectionItems(
-        start,
+        startIndexForMultiSelect,
         itemIndex,
         items[column],
       );
     } else {
       nonConsecutiveItems = getNonConsecutiveItems(
         itemIndex,
-        start,
+        startIndexForMultiSelect,
         items[column],
       );
 
       multiSelectionItems = getMultiSelectionItems(
         itemIndex,
-        start,
+        startIndexForMultiSelect,
         items[column],
       );
     }
@@ -142,15 +132,11 @@ export default function useMultiSelect(items: Items) {
     }));
   };
 
-  const toggleSelection = (
-    itemId: string,
-    itemIndex: number,
-    column: Columns,
-  ) => {
+  const toggleSelection = (itemId: string) => {
     const hasSelectedItems = selectedItems.selectedItemsId.size > 1;
 
     if (hasSelectedItems) {
-      setSelectedItemsToCurrentItem(itemId, itemIndex, column);
+      setSelectedItemsToCurrentItem(itemId);
       return;
     }
 
@@ -159,7 +145,7 @@ export default function useMultiSelect(items: Items) {
     if (isPrevSelected) {
       setSelectedItems(initialSelectedItems);
     } else {
-      setSelectedItemsToCurrentItem(itemId, itemIndex, column);
+      setSelectedItemsToCurrentItem(itemId);
     }
   };
 
@@ -168,10 +154,7 @@ export default function useMultiSelect(items: Items) {
     const id = items[column][source.index].id;
 
     setSelectedItems(({ selectedItemsId }) => ({
-      multiSelection: {
-        column,
-        start: source.index,
-      },
+      startItemForMultiSelect: id,
       selectedItemsId: new Set(
         selectedItemsId.size <= 1 ? [id] : [...selectedItemsId, id],
       ),

@@ -18,10 +18,7 @@ const items: Items = {
 };
 
 const initialSelectedItems: SelectedItems = {
-  multiSelection: {
-    column: null,
-    start: -1,
-  },
+  startItemForMultiSelect: "",
   selectedItemsId: new Set(),
 };
 

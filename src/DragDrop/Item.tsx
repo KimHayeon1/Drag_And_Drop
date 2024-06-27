@@ -17,13 +17,9 @@ export default function Item({
   item: ItemType;
   index: number;
   column: Columns;
-  toggleSelectionInGroup: (
-    itemId: string,
-    itemIndex: number,
-    column: Columns,
-  ) => void;
+  toggleSelectionInGroup: (itemId: string) => void;
   multiSelectTo: (itemId: string, itemIndex: number, column: Columns) => void;
-  toggleSelection: (itemId: string, itemIndex: number, column: Columns) => void;
+  toggleSelection: (itemId: string) => void;
   isSelected: boolean;
 }) {
   const onKeyDown = (
@@ -74,7 +70,7 @@ export default function Item({
 
   const performAction = (event: MouseEvent | KeyboardEvent) => {
     if (wasToggleInSelectionGroupKeyUsed(event)) {
-      toggleSelectionInGroup(item.id, index, column);
+      toggleSelectionInGroup(item.id);
       return;
     }
 
@@ -83,7 +79,7 @@ export default function Item({
       return;
     }
 
-    toggleSelection(item.id, index, column);
+    toggleSelection(item.id);
   };
 
   return (

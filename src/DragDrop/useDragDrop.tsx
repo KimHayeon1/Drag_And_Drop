@@ -1,13 +1,15 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { DragUpdate, DraggableLocation, DropResult } from "react-beautiful-dnd";
 
+import { columns } from "@/DragDrop/data";
 import { isEven } from "@/utils";
 
-import type { Columns, Items } from "@/DragDrop/model";
+import type { Columns, ItemType, Items, SelectedItems } from "@/DragDrop/model";
 
 export default function useDragDrop(
   items: Items,
   setItems: Dispatch<SetStateAction<Items>>,
+  selectedItems: SelectedItems,
 ) {
   const setIsDropAble = (source: DraggableLocation, isDropAble: boolean) => {
     const sourceColumn = source.droppableId as Columns;
@@ -100,12 +102,30 @@ export default function useDragDrop(
         return;
       }
 
-      const sourceColumn = source.droppableId as Columns;
       const destinationColumn = destination.droppableId as Columns;
 
-      const newItems = { ...items };
-      const [targetItem] = newItems[sourceColumn].splice(source.index, 1);
-      newItems[destinationColumn].splice(destination.index, 0, targetItem);
+      const newItems: Items = {
+        column1: [],
+        column2: [],
+        column3: [],
+        column4: [],
+      };
+
+      const dropItems: ItemType[] = [];
+      columns.forEach((column) => {
+        newItems[column].push(
+          ...items[column].filter(
+            ({ id }) => !selectedItems.selectedItemsId.has(id),
+          ),
+        );
+        dropItems.push(
+          ...items[column].filter(({ id }) =>
+            selectedItems.selectedItemsId.has(id),
+          ),
+        );
+      });
+
+      newItems[destinationColumn].splice(destination.index, 0, ...dropItems);
       setItems(newItems);
     },
     [items],

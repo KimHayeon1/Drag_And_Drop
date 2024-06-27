@@ -13,7 +13,6 @@ import type { Items } from "@/DragDrop/model";
 export default function DragDrop() {
   const [items, setItems] = useState<Items>(itemsData);
 
-  const { onDragEnd, onDragUpdate } = useDragDrop(items, setItems);
   const {
     selectedItems,
     toggleSelectionInGroup,
@@ -21,6 +20,11 @@ export default function DragDrop() {
     toggleSelection,
     addItemInSelectionGroup,
   } = useMultiSelect(items);
+  const { onDragEnd, onDragUpdate } = useDragDrop(
+    items,
+    setItems,
+    selectedItems,
+  );
 
   return (
     <DragDropContext
