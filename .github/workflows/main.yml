@@ -23,7 +23,25 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install
-        run: npx playwright install msedge
+
+      - name: Install required libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+              libwoff2-dev \
+              libvpx6 \
+              libevent-2.1-7 \
+              libopus0 \
+              libgstreamer-plugins-base1.0-0 \
+              libgstreamer1.0-0 \
+              libgstreamer-plugins-good1.0-0 \
+              libgstreamer-plugins-bad1.0-0 \
+              libharfbuzz0b \
+              libhyphen0 \
+              libmanette-0.2-0 \
+              libflite1 \
+              libgles2-mesa \
+              libx264-155
 
       - name: Run test
         run: npm test
