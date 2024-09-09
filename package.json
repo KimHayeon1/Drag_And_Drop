@@ -13,7 +13,7 @@
     "start": "webpack --config webpack.dev.js",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
-    "test:playwright": "playwright test"
+    "test:e2e": "playwright test"
   },
   "main": "index.js",
   "dependencies": {
