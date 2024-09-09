@@ -28,7 +28,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libwoff2-dev \
+            libwoff2-2 \
             libvpx-dev \
             libevent-dev \
             libopus-dev \
