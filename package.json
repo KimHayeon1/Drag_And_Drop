@@ -12,13 +12,15 @@
     "build": "webpack --config webpack.prod.js",
     "start": "webpack --config webpack.dev.js",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "test": "jest"
+    "test": "jest",
+    "test:playwright": "playwright test"
   },
   "main": "index.js",
   "dependencies": {
     "react": "18.2.0",
     "react-beautiful-dnd": "13.1.1",
     "react-dom": "18.2.0",
+    "react-uuid": "^2.0.0",
     "styled-components": "^6.1.11"
   },
   "devDependencies": {
