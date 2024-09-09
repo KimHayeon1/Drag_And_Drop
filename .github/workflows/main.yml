@@ -24,29 +24,6 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libwoff1 \
-            libvpx-dev \
-            libevent-dev \
-            libopus-dev \
-            libgstreamer1.0-dev \
-            libgstreamer-plugins-base1.0-dev \
-            libharfbuzz-dev \
-            libhyphen-dev \
-            libflite1 \
-            libgles2-mesa-dev \
-            libx264-dev \
-            gstreamer1.0-libav \
-            gstreamer1.0-plugins-good \
-            gstreamer1.0-plugins-bad \
-            gstreamer1.0-plugins-ugly \
-            gstreamer1.0-alsa \
-            libflite1 \
-            libflite-dev
-
       - name: Run test
         run: npm test
 
