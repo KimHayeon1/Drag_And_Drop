@@ -21,7 +21,8 @@ const StyledWrap = styled.div`
 `;
 
 const StyledColumn = styled.section<{ $isDraggingOver: boolean }>`
-  padding: var(--grid);
+  display: flex;
+  flex-direction: column;
   width: calc((100% - var(--grid) * 6) / 4);
   flex-grow: 1;
   background: ${({ $isDraggingOver }) => ($isDraggingOver ? "#bbb" : "#ddd")};
@@ -29,8 +30,8 @@ const StyledColumn = styled.section<{ $isDraggingOver: boolean }>`
   text-align: center;
 
   h2 {
-    margin: calc(var(--grid) * 1.5) 0;
     font-size: var(--title-s);
+    padding: calc(var(--grid) * 1.5) 0;
   }
 
   @media (max-width: 768px) {
@@ -40,6 +41,12 @@ const StyledColumn = styled.section<{ $isDraggingOver: boolean }>`
   @media (max-width: 430px) {
     width: 100%;
   }
+`;
+
+const StyledList = styled.ul`
+  height: 500px;
+  padding: 0 var(--grid);
+  overflow-y: scroll;
 `;
 
 const DraggingGroupStyle = css`
@@ -107,4 +114,4 @@ const StyledItem = styled.li<{
   }
 `;
 
-export { StyledMain, StyledWrap, StyledColumn, StyledItem };
+export { StyledMain, StyledWrap, StyledColumn, StyledItem, StyledList };

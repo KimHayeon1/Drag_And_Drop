@@ -1,12 +1,18 @@
+import uuid from "react-uuid";
+
 import type { Columns, ItemType, Items, SelectedItems } from "@/DragDrop/model";
 
 const columns: Columns[] = ["No Status", "Todo", "In Progress", "Done"];
 
+const createItem = (content: string) => {
+  return {
+    id: uuid(),
+    content,
+  };
+};
+
 const getItems = (count: number): ItemType[] =>
-  Array.from({ length: count }, (_, index) => ({
-    id: `item-${index}`,
-    content: `item ${index + 1}`,
-  }));
+  Array.from({ length: count }, (_, index) => createItem(`item ${index + 1}`));
 
 const items: Items = {
   "No Status": getItems(10),
@@ -20,4 +26,4 @@ const initialSelectedItems: SelectedItems = {
   selectedItemsId: new Set(),
 };
 
-export { columns, items, initialSelectedItems };
+export { columns, items, initialSelectedItems, createItem };

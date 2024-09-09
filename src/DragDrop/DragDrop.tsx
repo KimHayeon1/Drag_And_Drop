@@ -1,11 +1,13 @@
 import { FocusEvent, useEffect, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
-import { columns } from "@/DragDrop/data";
+import AddBtn from "@/DragDrop/AddBtn/AddBtn";
+import { columns, createItem } from "@/DragDrop/data";
 import { items as itemsData } from "@/DragDrop/data";
 import Item from "@/DragDrop/Item";
 import {
   StyledColumn,
+  StyledList,
   StyledMain,
   StyledWrap,
 } from "@/DragDrop/StyledDragDrop";
@@ -79,16 +81,17 @@ export default function DragDrop() {
         }}
       >
         <StyledWrap onBlur={onBlur}>
-          {columns.map((column) => (
+          {columns.map((column, i) => (
             <Droppable key={column} droppableId={column}>
               {(provided, snapshot) => (
                 <StyledColumn
+                  id={column.replace(/ /g, "-").toLowerCase()}
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                   $isDraggingOver={snapshot.isDraggingOver}
                 >
                   <h2>{column}</h2>
-                  <ul>
+                  <StyledList>
                     {items[column].map((item, index) => {
                       let itemState: ItemState = "default";
 
@@ -127,7 +130,18 @@ export default function DragDrop() {
                       );
                     })}
                     {provided.placeholder}
-                  </ul>
+                  </StyledList>
+                  {i === 0 && (
+                    <AddBtn
+                      addItem={() => {
+                        const item = createItem("아이템");
+                        setItems((prev) => ({
+                          ...prev,
+                          [column]: [...prev[column], item],
+                        }));
+                      }}
+                    />
+                  )}
                 </StyledColumn>
               )}
             </Droppable>
