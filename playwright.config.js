@@ -1,3 +1,5 @@
+import { devices } from "@playwright/test";
+
 module.exports = {
   testDir: "./test",
   fullyParallel: true,
@@ -10,11 +12,15 @@ module.exports = {
   projects: [
     {
       name: "firefox",
-      use: { browserName: "firefox" },
+      use: {
+        ...devices["Desktop Firefox"],
+      },
     },
     {
       name: "webkit",
-      use: { browserName: "webkit" },
+      use: {
+        ...devices["Desktop Safari"],
+      },
     },
     {
       name: "chromium",
@@ -23,13 +29,13 @@ module.exports = {
     {
       name: "Microsoft Edge",
       use: {
-        channel: "msedge",
+        ...devices["Desktop Edge"],
       },
     },
     {
       name: "Google Chrome",
       use: {
-        channel: "chrome",
+        ...devices["Desktop Chrome"],
       },
     },
   ],
