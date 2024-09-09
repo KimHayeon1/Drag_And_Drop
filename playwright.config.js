@@ -24,18 +24,14 @@ module.exports = {
     },
     {
       name: "chromium",
-      use: { browserName: "chromium" },
+      use: {
+        ...devices["Desktop Chrome"],
+      },
     },
     {
       name: "Microsoft Edge",
       use: {
         ...devices["Desktop Edge"],
-      },
-    },
-    {
-      name: "Google Chrome",
-      use: {
-        ...devices["Desktop Chrome"],
       },
     },
   ],
