@@ -1,5 +1,12 @@
 [배포 URL](https://dragdrop-kimhayeon.netlify.app/)
 
+## Webpack
+create-react-app의 react-scripts 대신 직접 Webpack 설정하여 React 애플리케이션을 구성했다.
+
+## 드래그 제약 조건
+- 첫 번째 칼럼에서 세 번째 칼럼으로는 아이템 이동이 불가능하다.
+- 짝수 아이템은 다른 짝수 아이템 앞으로 이동할 수 없다.
+
 ## 드래그 & 드롭 가이드
 ### 1. 마우스
 - 다중 선택 : shift + 클릭(마우스 왼쪽)
